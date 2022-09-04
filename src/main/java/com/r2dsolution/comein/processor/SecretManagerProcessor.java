@@ -29,7 +29,6 @@ public class SecretManagerProcessor implements EnvironmentPostProcessor {
 	@Override
 	public void postProcessEnvironment(ConfigurableEnvironment env, SpringApplication application) {
 //	    String secretName = "dev/db/postgresql/comein";
-//	    String region = "us-east-2";
 	    String region = "ap-southeast-1";
 		System.out.println("loading........SecretManagerProcessor");
 		try {

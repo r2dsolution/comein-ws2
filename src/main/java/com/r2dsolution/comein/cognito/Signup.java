@@ -24,7 +24,7 @@ public class Signup {
 	
 	static String SECRET_KEY = "a+sztiFt6n55xmV4u5IVQSjDjiobeiC68JT1YOpJ";
 
-    static String userPoolId = "us-east-2_N4u6sVupy";
+    static String userPoolId = "ap-southeast-1_6RA5il9qF";
 	
     public static void main(String[] args) {
 
@@ -34,7 +34,7 @@ public class Signup {
 	    CognitoIdentityProviderClient cognitoClient =
         CognitoIdentityProviderClient.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.US_EAST_2)
+                .region(Region.AP_SOUTHEAST_1)
                 .build();
 
 

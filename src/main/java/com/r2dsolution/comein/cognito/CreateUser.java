@@ -29,13 +29,13 @@ public class CreateUser {
 	    CognitoIdentityProviderClient cognitoClient =
         CognitoIdentityProviderClient.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.US_EAST_2)
+                .region(Region.AP_SOUTHEAST_1)
                 .build();
 
 
-	    String userPoolId = "us-east-2_N4u6sVupy";
-	    String userName = "testEmail@abc.com";
-	    String email = "testEmail@abc.com";
+	    String userPoolId = "ap-southeast-1_6RA5il9qF";
+	    String userName = "testEmail1@abc.com";
+	    String email = "testEmail1@abc.com";
 	    String password = "password";
 
         createNewUser(cognitoClient, userPoolId, userName, email, password);

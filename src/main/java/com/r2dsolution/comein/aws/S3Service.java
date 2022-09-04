@@ -36,7 +36,7 @@ public class S3Service {
 	    
         S3Client client = S3Client.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.US_EAST_2)
+                .region(Region.AP_SOUTHEAST_1)
         		.build();
         
         String path = "public/" + module + "/";
@@ -59,7 +59,7 @@ public class S3Service {
 	    
         S3Client client = S3Client.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.US_EAST_2)
+                .region(Region.AP_SOUTHEAST_1)
         		.build();
         
         String path = "public/" + module + "/";

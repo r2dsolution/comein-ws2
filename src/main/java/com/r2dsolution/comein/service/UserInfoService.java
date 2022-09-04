@@ -252,7 +252,7 @@ public class UserInfoService {
 				PersonalDto personalReq = new PersonalDto();
 				personalReq.setEmail(req.getEmail());
 				List<PersonalDto> persons = this.cognitoService.get(AWSCognitoService.GET_USER, personalReq);
-				if(!personTmps.isEmpty()) {
+				if(!persons.isEmpty()) {
 					personalRes = persons.get(0);
 					personalReq.setOwnerId(personalRes.getOwnerId());
 					personalReq.setFirstName(personalTmpRes.getFirstName());

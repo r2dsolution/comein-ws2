@@ -29,7 +29,7 @@ public class ListUserPools {
 	    CognitoIdentityProviderClient cognitoClient =
         CognitoIdentityProviderClient.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.US_EAST_2)
+                .region(Region.AP_SOUTHEAST_1)
                 .build();
 	    
 //        CognitoIdentityProviderClient cognitoClient = CognitoIdentityProviderClient.builder()

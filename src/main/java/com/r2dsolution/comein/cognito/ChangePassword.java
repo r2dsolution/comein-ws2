@@ -29,11 +29,11 @@ public class ChangePassword {
 	    CognitoIdentityProviderClient cognitoClient =
         CognitoIdentityProviderClient.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
-                .region(Region.US_EAST_2)
+                .region(Region.AP_SOUTHEAST_1)
                 .build();
 
 
-	    String userPoolId = "us-east-2_N4u6sVupy";
+	    String userPoolId = "ap-southeast-1_6RA5il9qF";
 	    String userName = "buk_joon@hotmail.com";
 	    String email = "buk_joon@hotmail.com";
 	    String password = "password";
