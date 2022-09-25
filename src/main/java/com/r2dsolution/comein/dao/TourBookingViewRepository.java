@@ -7,6 +7,6 @@ import com.r2dsolution.comein.entity.TourBookingView;
 
 public interface TourBookingViewRepository extends JpaSpecificationExecutor<TourBookingView>, PagingAndSortingRepository<TourBookingView, Long> {
 
-	TourBookingView findByBookingCode(String bookingCode);
+	TourBookingView findFirstByBookingCodeAndStatus(String bookingCode, String status);
 }
 

@@ -95,7 +95,7 @@ public class TourBookingService {
 		System.out.println("getTourBooking bookingCode : "+bookingCode);
 		TourBookingDto response = null;
 		
-		TourBookingView entity = tourBookingViewRepository.findByBookingCode(bookingCode);
+		TourBookingView entity = tourBookingViewRepository.findFirstByBookingCodeAndStatus(bookingCode, Constant.STATUS_BOOKING_BOOKED);
 		if(entity != null) {
 			response = new TourBookingDto();
 			response.setId(entity.getId());

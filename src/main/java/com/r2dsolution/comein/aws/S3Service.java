@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 @Service
 @PropertySource("classpath:aws.properties")
 public class S3Service {
-    private static final String BUCKET = "tawatchai3e231dfcd1b74f2bb33615888fa0fc48213041-dev";
+    private static final String BUCKET = "pub-comein-img";
      
 	@Value("${accessKey}")
 	String accessKey;
