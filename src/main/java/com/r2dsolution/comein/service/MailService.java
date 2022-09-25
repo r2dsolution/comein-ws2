@@ -58,7 +58,7 @@ public class MailService {
 		          .withCredentials(new ClasspathPropertiesFileCredentialsProvider("aws.properties")) 
 		          // Replace US_WEST_2 with the AWS Region you're using for
 		          // Amazon SES.
-		            .withRegion(Regions.US_EAST_2).build();
+		            .withRegion(Regions.AP_SOUTHEAST_1).build();
 		      SendEmailRequest request = new SendEmailRequest()
 		          .withDestination(
 		              new Destination().withToAddresses(to))
