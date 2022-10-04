@@ -124,7 +124,7 @@ public class OtaBookingService {
 			LocalDateTime currentTimestamp = LocalDateTime.now();
 			
 			OtaBooking entity = opt.get();
-			entity.setStatus(Constant.STATUS_OTA_MATCH);
+			entity.setStatus(Constant.STATUS_OTA_MANUAL_MATCH);
 //			entity.setUpdatedDate(currentTimestamp);
 //			entity.setUpdatedBy(userToken);
 			
@@ -149,7 +149,7 @@ public class OtaBookingService {
 			bookingInfo.setCheckout(checkout);
 			bookingInfo.setVisitorAdult(visitorAdult);
 			bookingInfo.setVisitorChild(entity.getChild());
-			bookingInfo.setStatus(Constant.STATUS_INVITED);
+			bookingInfo.setStatus(Constant.STATUS_ACTIVE);
 			bookingInfo.setCreatedDate(currentTimestamp);
 			bookingInfo.setCreatedBy(userToken);
 			bookingInfo.setUpdatedDate(currentTimestamp);

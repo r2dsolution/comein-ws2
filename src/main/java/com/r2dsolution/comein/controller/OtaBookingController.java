@@ -19,8 +19,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amazonaws.services.sqs.AmazonSQS;
+import com.r2dsolution.comein.client.SimpleQueueServiceClient;
 import com.r2dsolution.comein.dto.OtaBookingDto;
 import com.r2dsolution.comein.dto.ResponseListDto;
+import com.r2dsolution.comein.model.EmailRequest;
 import com.r2dsolution.comein.service.OtaBookingService;
 
 
@@ -71,6 +74,38 @@ public class OtaBookingController {
 		this.otaBookingService.saveOtaBooking(req, userToken);
 		
         return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+	
+	
+	@Autowired
+	private SimpleQueueServiceClient client;
+	
+	@GetMapping("/ota-bookings/email")
+	public ResponseEntity<Void> testSendEmailWithSqs() {
+		log.info("testSendEmailWithSqs.....");
+
+		
+		EmailRequest req = tokenToEmailRequest("jaroon.k@gmail.com");
+		//client.sendMessage(req);
+		AmazonSQS sqsClient = client.initClient();
+		String url = client.urlSendEmail(sqsClient);
+		client.send(sqsClient, url, req);
+		
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
+	
+	private EmailRequest tokenToEmailRequest(String email) {
+		EmailRequest req = new EmailRequest();
+//		req.setTemplate("PDPAInvite");
+//		req.setEmail(email);
+//		req.getParams().put("ref_name", "mock_refname");	
+//		req.getParams().put("token", "mock_token");
+//		req.getParams().put("url", "mock_url");	
+		req.setTemplate("invite_mail");
+		req.setEmail(email);
+		req.getParams().put("role", "mock_refname");	
+		req.getParams().put("link", "mock_url");	
+		return req;
 	}
 	
 }

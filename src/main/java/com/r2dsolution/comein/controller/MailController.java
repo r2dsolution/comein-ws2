@@ -23,8 +23,8 @@ public class MailController {
 		if(req.getTemplate() != null) {
 			if("invite_mail".equals(req.getTemplate())) {
 				mailService.sendRegisterInvite(req);
-			} else if("verify_mail".equals(req.getTemplate())) {
-				mailService.sendRegisterHotelAdminVerify(req);
+//			} else if("verify_mail".equals(req.getTemplate())) {
+//				mailService.sendRegisterHotelAdminVerify(req);
 			} else if("success_mail".equals(req.getTemplate())) {
 				mailService.sendRegisterHotelAdminSuccess(req);
 			} else if("booking_mail".equals(req.getTemplate())) {

@@ -34,7 +34,8 @@ public class Constant {
 	public static final String STATUS_TICKET_INACTIVE = "InActive";
 	public static final String STATUS_TICKET_CANCEL = "Cancel";
 	
-	public static final String STATUS_OTA_MATCH = "Match";
+	public static final String STATUS_OTA_AUTO_MATCH = "AutoMatch";
+	public static final String STATUS_OTA_MANUAL_MATCH = "ManualMatch";
 	public static final String STATUS_OTA_UNMATCH = "UnMatch";
 
 	public static final String STATUS_CONSENT_CONFIRM = "Confirm";
