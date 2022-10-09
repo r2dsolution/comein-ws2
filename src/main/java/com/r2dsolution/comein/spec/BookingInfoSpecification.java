@@ -33,6 +33,7 @@ public class BookingInfoSpecification implements Specification<BookingInfo>{
 			Long hotelId = this.filter.getHotelId();
 			String ownerId = this.filter.getOwnerId();
 			String refName = this.filter.getRefName();
+			String bookingNo = this.filter.getBookingNo();
 			if(hotelId != null) {
 				predicates.add(cb.equal(root.get("hotelId"), hotelId));
 			}
@@ -42,6 +43,10 @@ public class BookingInfoSpecification implements Specification<BookingInfo>{
 			if(refName != null && !"".equals(refName)) {
 				refName = genContainLikePattern(refName.toUpperCase());
 				predicates.add(cb.like(cb.upper(root.get("refName")), refName));
+			}
+			if(bookingNo != null && !"".equals(bookingNo)) {
+				bookingNo = genContainLikePattern(bookingNo.toUpperCase());
+				predicates.add(cb.like(cb.upper(root.get("bookingNo")), bookingNo));
 			}
 		}
 		return cb.and(predicates.toArray(new Predicate[predicates.size()]));

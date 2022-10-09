@@ -65,8 +65,8 @@ public class BookingService {
 	@Autowired
 	private MailService mailService;
 	
-	public ResponseListDto<BookingDto> searchBookingInfo(String userToken, String referenceName, Pageable pageable){
-		log.info("searchBookingInfo referenceName : {}, userToken : {}", referenceName, userToken);
+	public ResponseListDto<BookingDto> searchBookingInfo(String userToken, String referenceName, String bookingNo, Pageable pageable){
+		log.info("searchBookingInfo referenceName : {}, bookingNo, userToken : {}", referenceName, bookingNo, userToken);
 		ResponseListDto<BookingDto> response = new ResponseListDto<>();
 		
 		List<BookingDto> results = new ArrayList<>();
@@ -87,6 +87,7 @@ public class BookingService {
 		BookingInfo filter = new BookingInfo();
 		filter.setHotelId(hotelId);
 		filter.setRefName(referenceName);
+		filter.setBookingNo(bookingNo);
 		BookingInfoSpecification spec = new BookingInfoSpecification(filter);
 		
 		Sort sort = Sort.by(Direction.DESC, "updatedDate");

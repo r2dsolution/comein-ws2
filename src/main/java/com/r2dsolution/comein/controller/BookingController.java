@@ -36,10 +36,10 @@ public class BookingController {
 	
 	@GetMapping("/bookings")
 	public ResponseEntity<ResponseListDto<BookingDto>> searchBookingInfo(@RequestHeader(ATTR_USER_TOKEN) String userToken,
-			@RequestParam(required = false) String referenceName, Pageable pageable) {
-		log.info("Start searchBookingInfo...referenceName : {}", referenceName);
+			@RequestParam(required = false) String referenceName, @RequestParam(required = false) String bookingNo, Pageable pageable) {
+		log.info("Start searchBookingInfo...referenceName : {}, bookingNo : {}", referenceName, bookingNo);
 		
-		ResponseListDto<BookingDto> res = this.bookingService.searchBookingInfo(userToken, referenceName, pageable);
+		ResponseListDto<BookingDto> res = this.bookingService.searchBookingInfo(userToken, referenceName, bookingNo, pageable);
 		
         return ResponseEntity.ok(res);
 	}
