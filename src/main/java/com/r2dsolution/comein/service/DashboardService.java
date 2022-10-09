@@ -31,7 +31,11 @@ public class DashboardService {
 			long dashboardId = req.getDashboard_id();
 			dashboardId = dashboardId==0?1:dashboardId;
 			
-			response = dashboardRepository.queryDashboard(dashboardId, req.getTour_company_id(), req.getDate_from(), req.getDate_to());
+			if(req.getTour_company_id() > 0)
+				response = dashboardRepository.queryDashboard(dashboardId, req.getTour_company_id(), req.getDate_from(), req.getDate_to());
+			else
+				response = dashboardRepository.queryDashboard(dashboardId, req.getDate_from(), req.getDate_to());
+			
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
