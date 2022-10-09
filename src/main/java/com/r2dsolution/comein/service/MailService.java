@@ -10,15 +10,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
-import com.amazonaws.services.simpleemail.model.Body;
-import com.amazonaws.services.simpleemail.model.Content;
-import com.amazonaws.services.simpleemail.model.Destination;
-import com.amazonaws.services.simpleemail.model.Message;
-import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.r2dsolution.comein.client.SimpleQueueServiceClient;
 import com.r2dsolution.comein.dto.MailDto;
@@ -146,7 +137,7 @@ public class MailService {
 //		String subject = "Welcome to ComeIn - Booking Success";
 //		sendMail(emailOwner, dto.getTo(), subject , template);
 		
-		EmailRequest req = generateBookingSuccessMailReq(dto.getTo(), dto.getRole(), dto.getName(), dto.getSurname());
+		EmailRequest req = generateBookingSuccessMailReq(dto.getTo(), dto.getRole(), dto.getName());
 		sendMail(req);
 		
 	}
@@ -231,7 +222,7 @@ public class MailService {
         return output;
     }
     
-    public EmailRequest generateBookingSuccessMailReq(String email, String role, String name, String surname)
+    public EmailRequest generateBookingSuccessMailReq(String email, String role, String name)
     {
     	final String template = "booking_mail";
     	
@@ -244,7 +235,6 @@ public class MailService {
 //		req.getParams().put("role", role);	
 //		req.getParams().put("link", link);	
 		req.getParams().put("name", name);	
-		req.getParams().put("surname", surname);	
 		return req;
 		
     }

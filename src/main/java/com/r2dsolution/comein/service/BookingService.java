@@ -289,8 +289,7 @@ public class BookingService {
 			mailDto.setTemplate("success_mail");
 			mailDto.setTo(email);
 			mailDto.setRole("customer");
-			mailDto.setName("-");
-			mailDto.setSurname("-");
+			mailDto.setName(entity.getRefName());
 			mailService.sendBookingSuccess(mailDto);
 			
 		} else {
