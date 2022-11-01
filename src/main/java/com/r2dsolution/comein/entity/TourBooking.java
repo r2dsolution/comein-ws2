@@ -3,6 +3,7 @@
 package com.r2dsolution.comein.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -61,6 +62,8 @@ public class TourBooking implements Serializable {
     private String tourName;
     @Column(name="tour_date", nullable=false)
     private LocalDate tourDate;
+    @Column(name="sell_value")
+    private BigDecimal sellValue;
     
     /** Default constructor. */
     public TourBooking() {
@@ -401,6 +404,14 @@ public class TourBooking implements Serializable {
 
 	public void setTicketId(long ticketId) {
 		this.ticketId = ticketId;
+	}
+
+	public BigDecimal getSellValue() {
+		return sellValue;
+	}
+
+	public void setSellValue(BigDecimal sellValue) {
+		this.sellValue = sellValue;
 	}
 
 }
