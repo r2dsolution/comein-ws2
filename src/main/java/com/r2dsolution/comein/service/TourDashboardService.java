@@ -1,10 +1,10 @@
 package com.r2dsolution.comein.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,27 +36,44 @@ public class TourDashboardService {
 		List<DashboardTourBooking> entities = dashboardRepository.findByIdTourCompanyIdAndIdTourDateGreaterThanEqualAndIdTourDateLessThanEqualOrderByIdTourNameAscIdTourDateAsc(req.getTour_company_id(), req.getDate_from(), req.getDate_to());
 		if(!entities.isEmpty()) {
 			Map<String, List<DashboardTourBooking>> grpTour = entities.stream().collect(Collectors.groupingBy(e -> e.getId().getTourName(), Collectors.toList()));
+			Map<LocalDate, List<DashboardTourBooking>> grpDate = entities.stream().collect(Collectors.groupingBy(e -> e.getId().getTourDate(), Collectors.toList()));
+			
+
 			
 			Map<String, Object> data = null;
 			Map<String, Object> mapDate = null;
-			List<Map<String, Object>> dates = null;
+
 			Iterator<String> iterator = grpTour.keySet().iterator();
 			while (iterator.hasNext()) {
 				data = new LinkedHashMap<>();
 		        String key = iterator.next();
 		        
-		        dates = new LinkedList<>();
+				Map<LocalDate, Map<String, Object>> defaultDate = new LinkedHashMap<>();
+		        //set default
+		        Iterator<LocalDate> itDate = grpDate.keySet().iterator();
+				while (itDate.hasNext()) {
+					mapDate = new HashMap<>();
+					LocalDate date = itDate.next();
+					mapDate.put("tour_date", DateUtils.toStr(date, DateUtils.YYYYMMDD));
+		        	mapDate.put("visitor", 0);
+		        	mapDate.put("booking", 0);
+		        	mapDate.put("confirm", 0);
+		        	mapDate.put("cancel", 0);
+		        	defaultDate.put(date, mapDate);
+				}
+				
 		        for(DashboardTourBooking entity : grpTour.get(key)){
-		        	mapDate = new HashMap<>();
-		        	mapDate.put("tour_date", DateUtils.toStr(entity.getId().getTourDate(), DateUtils.YYYYMMDD));
-		        	mapDate.put("visitor", entity.getTotalVisitor());
-		        	mapDate.put("booking", entity.getTotalBooking());
-		        	mapDate.put("confirm", entity.getTotalConfirm());
-		        	mapDate.put("cancel", entity.getTotalCancel());
-		        	dates.add(mapDate);
-		        }
+		        	if(defaultDate.containsKey(entity.getId().getTourDate())) {
+		        		mapDate = defaultDate.get(entity.getId().getTourDate());
+			        	mapDate.put("visitor", entity.getTotalVisitor());
+			        	mapDate.put("booking", entity.getTotalBooking());
+			        	mapDate.put("confirm", entity.getTotalConfirm());
+			        	mapDate.put("cancel", entity.getTotalCancel());
+		        	}
+		        }					
+
 		        data.put("tour_name", key);
-		        data.put("dates", dates);
+		        data.put("dates", defaultDate.values());
 		        response.add(data);
 		    }
 		}
