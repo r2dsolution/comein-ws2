@@ -321,5 +321,35 @@ public class TourCompanyService {
 		
 		return results;
 	}
+	
+	public void updateTourCompanyProfile(TourCompanyDto req, String userToken){
+		log.info("Start updateTourCompanyProfile id : {}", req.getId());
+		
+		if(req != null) {
+			if(ObjectUtils.isEmpty(req.getFirstName())) {
+				throw new ServiceException("First Name is require.");	
+			}
+			if(ObjectUtils.isEmpty(req.getLastName())) {
+				throw new ServiceException("Last Name is require.");	
+			}
+		}
+		
+		//update cognito
+		PersonalDto personalRes = null;
+		PersonalDto personalReq = new PersonalDto();
+		personalReq.setOwnerId(userToken);
+		List<PersonalDto> persons = this.cognitoService.get(AWSCognitoService.GET_USER, personalReq);
+		if(!persons.isEmpty()) {
+			personalRes = persons.get(0);
+			personalReq.setOwnerId(personalRes.getOwnerId());
+			personalReq.setFirstName(req.getFirstName());
+			personalReq.setLastName(req.getLastName());
+			if(StringUtils.isEmpty(req.getReferenceName()))
+				personalReq.setReferenceName(StringUtils.trimToEmpty(req.getFirstName()) + " " + StringUtils.trimToEmpty(req.getLastName()));
+			else
+				personalReq.setReferenceName(req.getReferenceName());
+			this.cognitoService.post(AWSCognitoService.POST_UPDATE_USER, personalReq);
+		}
+	}
 
 }

@@ -93,4 +93,13 @@ public class TourCompanyController {
 				
 		return ResponseEntity.ok(res);	
 	}
+	
+	@PutMapping("/tour-companies/profiles")
+	public ResponseEntity<Void> updateTourCompanyProfile(@RequestHeader(ATTR_USER_TOKEN) String userToken, @RequestBody TourCompanyDto req) {
+		log.info("updateTourCompanyProfile.....");
+			
+		this.tourCompanyService.updateTourCompanyProfile(req, userToken);
+				
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 }
