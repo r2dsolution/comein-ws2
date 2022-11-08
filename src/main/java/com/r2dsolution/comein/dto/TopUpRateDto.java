@@ -4,7 +4,7 @@ import java.util.List;
 
 public class TopUpRateDto {
 	private Long companyId;
-	private String useDefault;
+	private boolean useDefault;
 	private List<TopUpRateDetailDto> detail;
 	
 	public Long getCompanyId() {
@@ -13,16 +13,17 @@ public class TopUpRateDto {
 	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
-	public String getUseDefault() {
-		return useDefault;
-	}
-	public void setUseDefault(String useDefault) {
-		this.useDefault = useDefault;
-	}
+
 	public List<TopUpRateDetailDto> getDetail() {
 		return detail;
 	}
 	public void setDetail(List<TopUpRateDetailDto> detail) {
 		this.detail = detail;
+	}
+	public boolean isUseDefault() {
+		return useDefault;
+	}
+	public void setUseDefault(boolean useDefault) {
+		this.useDefault = useDefault;
 	}
 	}

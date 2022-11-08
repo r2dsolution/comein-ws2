@@ -12,30 +12,28 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-@Entity(name="tour_province")
-public class TourProvince implements Serializable {
+@Entity(name="payment_condition_default")
+public class PaymentConditionDefault implements Serializable {
 
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-
 	/** Primary key. */
     protected static final String PK = "id";
-
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(unique=true, nullable=false, precision=19)
     private long id;
-    @Column(name="tour_id", nullable=false, precision=19)
-    private long tourId;
-    @Column(nullable=false, length=50)
-    private String province;
+    @Column(name="payable_day", nullable=false, precision=10)
+    private int payableDay;
+    @Column(name="payable_tour_day", nullable=false, precision=10)
+    private int payableTourDay;
 
     /** Default constructor. */
-    public TourProvince() {
+    public PaymentConditionDefault() {
         super();
     }
 
@@ -58,55 +56,55 @@ public class TourProvince implements Serializable {
     }
 
     /**
-     * Access method for tourId.
+     * Access method for payableDay.
      *
-     * @return the current value of tourId
+     * @return the current value of payableDay
      */
-    public long getTourId() {
-        return tourId;
+    public int getPayableDay() {
+        return payableDay;
     }
 
     /**
-     * Setter method for tourId.
+     * Setter method for payableDay.
      *
-     * @param aTourId the new value for tourId
+     * @param aPayableDay the new value for payableDay
      */
-    public void setTourId(long aTourId) {
-        tourId = aTourId;
+    public void setPayableDay(int aPayableDay) {
+        payableDay = aPayableDay;
     }
 
     /**
-     * Access method for province.
+     * Access method for payableTourDay.
      *
-     * @return the current value of province
+     * @return the current value of payableTourDay
      */
-    public String getProvince() {
-        return province;
+    public int getPayableTourDay() {
+        return payableTourDay;
     }
 
     /**
-     * Setter method for province.
+     * Setter method for payableTourDay.
      *
-     * @param aProvince the new value for province
+     * @param aPayableTourDay the new value for payableTourDay
      */
-    public void setProvince(String aProvince) {
-        province = aProvince;
+    public void setPayableTourDay(int aPayableTourDay) {
+        payableTourDay = aPayableTourDay;
     }
 
     /**
-     * Compares the key for this instance with another TourProvince.
+     * Compares the key for this instance with another PaymentConditionDefault.
      *
      * @param other The object to compare to
-     * @return True if other object is instance of class TourProvince and the key objects are equal
+     * @return True if other object is instance of class PaymentConditionDefault and the key objects are equal
      */
     private boolean equalKeys(Object other) {
         if (this==other) {
             return true;
         }
-        if (!(other instanceof TourProvince)) {
+        if (!(other instanceof PaymentConditionDefault)) {
             return false;
         }
-        TourProvince that = (TourProvince) other;
+        PaymentConditionDefault that = (PaymentConditionDefault) other;
         if (this.getId() != that.getId()) {
             return false;
         }
@@ -114,15 +112,15 @@ public class TourProvince implements Serializable {
     }
 
     /**
-     * Compares this instance with another TourProvince.
+     * Compares this instance with another PaymentConditionDefault.
      *
      * @param other The object to compare to
      * @return True if the objects are the same
      */
     @Override
     public boolean equals(Object other) {
-        if (!(other instanceof TourProvince)) return false;
-        return this.equalKeys(other) && ((TourProvince)other).equalKeys(this);
+        if (!(other instanceof PaymentConditionDefault)) return false;
+        return this.equalKeys(other) && ((PaymentConditionDefault)other).equalKeys(this);
     }
 
     /**
@@ -146,7 +144,7 @@ public class TourProvince implements Serializable {
      */
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer("[TourProvince |");
+        StringBuffer sb = new StringBuffer("[PaymentConditionDefault |");
         sb.append(" id=").append(getId());
         sb.append("]");
         return sb.toString();
