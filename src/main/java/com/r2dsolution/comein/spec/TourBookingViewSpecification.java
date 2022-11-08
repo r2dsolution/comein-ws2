@@ -10,7 +10,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.ObjectUtils;
+import com.r2dsolution.comein.util.ObjectUtils;
 
 import com.r2dsolution.comein.entity.TourBookingView;
 import com.r2dsolution.comein.util.Constant;
