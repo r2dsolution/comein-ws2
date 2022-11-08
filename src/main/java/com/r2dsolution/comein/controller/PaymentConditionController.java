@@ -48,7 +48,7 @@ public class PaymentConditionController {
 		res.setPayableTourDate(3);
 		res.setPayableDate(0);
 		if(id != null) {
-			res.setUseDefault(null);
+			res.setUseDefault(false);
 			res.setCompanyId(1L);
 		}
 		

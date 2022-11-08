@@ -4,7 +4,7 @@ public class PaymentConditionDto {
 	private Integer payableTourDate;
 	private Integer payableDate;
 	private Long companyId;
-	private String useDefault;
+	private boolean useDefault;
 	
 	public Integer getPayableTourDate() {
 		return payableTourDate;
@@ -24,10 +24,10 @@ public class PaymentConditionDto {
 	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
 	}
-	public String getUseDefault() {
+	public boolean isUseDefault() {
 		return useDefault;
 	}
-	public void setUseDefault(String useDefault) {
+	public void setUseDefault(boolean useDefault) {
 		this.useDefault = useDefault;
 	}
 }
