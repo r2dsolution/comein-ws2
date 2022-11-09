@@ -1,22 +1,22 @@
 package com.r2dsolution.comein.dto;
 
 public class PaymentConditionDto {
-	private Integer payableTourDate;
-	private Integer payableDate;
+	private Integer payableTourDay;
+	private Integer payableDay;
 	private Long companyId;
 	private boolean useDefault;
 	
-	public Integer getPayableTourDate() {
-		return payableTourDate;
+	public Integer getPayableTourDay() {
+		return payableTourDay;
 	}
-	public void setPayableTourDate(Integer payableTourDate) {
-		this.payableTourDate = payableTourDate;
+	public void setPayableTourDay(Integer payableTourDay) {
+		this.payableTourDay = payableTourDay;
 	}
-	public Integer getPayableDate() {
-		return payableDate;
+	public Integer getPayableDay() {
+		return payableDay;
 	}
-	public void setPayableDate(Integer payableDate) {
-		this.payableDate = payableDate;
+	public void setPayableDay(Integer payableDay) {
+		this.payableDay = payableDay;
 	}
 	public Long getCompanyId() {
 		return companyId;
@@ -30,4 +30,5 @@ public class PaymentConditionDto {
 	public void setUseDefault(boolean useDefault) {
 		this.useDefault = useDefault;
 	}
+	
 }

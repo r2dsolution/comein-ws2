@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
 import com.r2dsolution.comein.dto.PaymentConditionDto;
-import com.r2dsolution.comein.service.TourInfoService;
+import com.r2dsolution.comein.service.PaymentConditionService;
 
 @Controller
 public class PaymentConditionController {
@@ -25,54 +25,43 @@ public class PaymentConditionController {
 	private static final String ATTR_USER_TOKEN = "userToken";
 	
 	@Autowired
-	private TourInfoService tourInfoService;
+	private PaymentConditionService paymentConditionService;
 	
 	@GetMapping("/payment-conditions")
 	public ResponseEntity<PaymentConditionDto> getDefaultPaymentCondition() {
 		log.info("getDefaultPaymentCondition.....");
 		
-//		TourInfoDto res = this.tourInfoService.getTourInfo(id);
-		
-		PaymentConditionDto res = new PaymentConditionDto();
-		res.setPayableTourDate(3);
-		res.setPayableDate(0);
+		PaymentConditionDto res = this.paymentConditionService.searchDefaultPaymentCondition();
 		
         return ResponseEntity.ok(res);
 	}
 	
-	@GetMapping("/payment-conditions/{id}")
-	public ResponseEntity<PaymentConditionDto> getPaymentCondition(@PathVariable Long id) {
-		log.info("getPaymentCondition.....id : {}", id);
-		
-		PaymentConditionDto res = new PaymentConditionDto();
-		res.setPayableTourDate(3);
-		res.setPayableDate(0);
-		if(id != null) {
-			res.setUseDefault(false);
-			res.setCompanyId(1L);
-		}
-		
+	@GetMapping("/payment-conditions/{companyId}")
+	public ResponseEntity<PaymentConditionDto> getCompanyPaymentCondition(@PathVariable Long companyId) {
+		log.info("getPaymentCondition.....");
+
+		PaymentConditionDto res = this.paymentConditionService.searchCompanyPaymentCondition(companyId);
+
         return ResponseEntity.ok(res);
 	}
-	
         
 	@PostMapping("/payment-conditions")
 	public ResponseEntity<Void> saveDefaultPaymentCondition(@RequestHeader(ATTR_USER_TOKEN) String userToken, @RequestBody PaymentConditionDto req) {
 		log.info("saveDefaultPaymentCondition.....");
 			
-//		this.tourInfoService.saveTourInfo(req, userToken);
+		this.paymentConditionService.saveDefaultPaymentCondition(req, userToken);
 		
         return new ResponseEntity<Void>(HttpStatus.OK);
 	}	
 	
-	@PostMapping("/payment-conditions/{id}")
-	public ResponseEntity<Void> savePaymentCondition(@RequestHeader(ATTR_USER_TOKEN) String userToken, @PathVariable Long id, @RequestBody PaymentConditionDto req) {
-		log.info("savePaymentCondition.....companyId : {}", id);
+	@PostMapping("/payment-conditions/{companyId}")
+	public ResponseEntity<Void> saveCompanyPaymentCondition(@RequestHeader(ATTR_USER_TOKEN) String userToken, @PathVariable Long companyId, @RequestBody PaymentConditionDto req) {
+		log.info("saveCompanyPaymentCondition.....companyId : {}", req.getCompanyId());
 			
-//		this.tourInfoService.saveTourInfo(req, userToken);
+		this.paymentConditionService.saveCompanyPaymentCondition(companyId, req, userToken);
 		
         return new ResponseEntity<Void>(HttpStatus.OK);
-	}	
+	}
 	
 	
 }
