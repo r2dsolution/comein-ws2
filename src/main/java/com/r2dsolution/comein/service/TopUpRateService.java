@@ -1,5 +1,6 @@
 package com.r2dsolution.comein.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class TopUpRateService {
 				dto.setTopUpRate(entity.getTopupRate());
 				dto.setComeinRate(entity.getComeinRate());
 				dto.setHotelRate(entity.getHotelRate());
+				dto.setUpdatedDate(entity.getUpdatedDate());
 				
 				response.add(dto);
 			}
@@ -70,6 +72,7 @@ public class TopUpRateService {
 			dto.setTopUpRate(entity.getTopupRate());
 			dto.setComeinRate(entity.getComeinRate());
 			dto.setHotelRate(entity.getHotelRate());
+			dto.setUpdatedDate(entity.getUpdatedDate());
 			
 			details.add(dto);
 		}
@@ -98,6 +101,7 @@ public class TopUpRateService {
 		
 		topUpRateDefaultRepository.deleteAll();
 		
+		LocalDateTime currentTimestamp = LocalDateTime.now();
 		List<TopupRateDefault> entities = new ArrayList<>();
 		TopupRateDefault entity = null;
 		for(TopUpRateDetailDto dto : req) {
@@ -107,6 +111,8 @@ public class TopUpRateService {
 			entity.setTopupRate(dto.getTopUpRate());
 			entity.setComeinRate(dto.getComeinRate());
 			entity.setHotelRate(dto.getHotelRate());
+			entity.setUpdatedDate(currentTimestamp);
+			
 			entities.add(entity);
 		}
 		if(!entities.isEmpty())
@@ -134,7 +140,8 @@ public class TopUpRateService {
 		
 		TopupRateCompany entity = null;
 		List<TopupRateCompany> entities = new ArrayList<>();
-		
+
+		LocalDateTime currentTimestamp = LocalDateTime.now();
 		boolean useDefault = req.isUseDefault();
 		for(TopUpRateDetailDto detail : req.getDetail()) {
 			entity = new TopupRateCompany();
@@ -145,6 +152,7 @@ public class TopUpRateService {
 			entity.setTopupRate(detail.getTopUpRate());
 			entity.setComeinRate(detail.getComeinRate());
 			entity.setHotelRate(detail.getHotelRate());
+			entity.setUpdatedDate(currentTimestamp);
 			
 			entities.add(entity);
 		}

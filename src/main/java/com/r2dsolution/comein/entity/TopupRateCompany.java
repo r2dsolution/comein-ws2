@@ -4,6 +4,7 @@ package com.r2dsolution.comein.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -42,7 +43,9 @@ public class TopupRateCompany implements Serializable {
     private BigDecimal comeinRate;
     @Column(name="hotel_rate", nullable=false, precision=131089)
     private BigDecimal hotelRate;
-
+    @Column(name="updated_date")
+    private LocalDateTime updatedDate;
+    
     /** Default constructor. */
     public TopupRateCompany() {
         super();
@@ -261,5 +264,13 @@ public class TopupRateCompany implements Serializable {
         ret.put("id", Long.valueOf(getId()));
         return ret;
     }
+
+	public LocalDateTime getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(LocalDateTime updatedDate) {
+		this.updatedDate = updatedDate;
+	}
 
 }
