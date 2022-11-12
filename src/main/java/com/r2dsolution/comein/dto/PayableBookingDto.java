@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class PayableBookingDto {
+	private Long companyId;
     private String bookingCode;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate tourDate;
@@ -50,6 +51,12 @@ public class PayableBookingDto {
 	}
 	public void setSellValue(BigDecimal sellValue) {
 		this.sellValue = sellValue;
+	}
+	public Long getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
 	}
     
 	
