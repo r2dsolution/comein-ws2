@@ -15,6 +15,7 @@ import com.r2dsolution.comein.dto.TopUpRateDetailDto;
 import com.r2dsolution.comein.dto.TopUpRateDto;
 import com.r2dsolution.comein.entity.TopupRateCompany;
 import com.r2dsolution.comein.entity.TopupRateDefault;
+import com.r2dsolution.comein.exception.ServiceException;
 
 @Service
 public class TopUpRateService {
@@ -46,6 +47,8 @@ public class TopUpRateService {
 				
 				response.add(dto);
 			}
+		} else {
+			throw new ServiceException("Data not found.");
 		}
 		
 		return response;
@@ -62,6 +65,8 @@ public class TopUpRateService {
 			TopupRateCompany entity = entities.get(0);
 			response.setCompanyId(entity.getCompanyId());
 			response.setUseDefault(entity.getUseDefault());
+		} else {
+			throw new ServiceException("Data not found.");
 		}
 		
 		TopUpRateDetailDto dto = null;

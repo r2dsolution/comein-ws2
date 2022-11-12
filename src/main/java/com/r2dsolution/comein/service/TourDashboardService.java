@@ -88,11 +88,11 @@ public class TourDashboardService {
 		return response;
 	}
 	
-	public List<Map<String, Object>> getTourBooking(Long companyId){
+	public List<Map<String, Object>> getTourBooking(Long companyId, DashboardReq req){
 		log.info("getTourBooking companyId : {}",companyId);
 		List<Map<String, Object>> response = new LinkedList<>();
 		
-		List<TourBookingView> entities = tourBookingViewRepository.findByCompanyIdAndStatus(companyId, Constant.STATUS_BOOKING_BOOKED);
+		List<TourBookingView> entities = tourBookingViewRepository.findByCompanyIdAndTourDateAndStatus(companyId, req.getTour_date(), Constant.STATUS_BOOKING_BOOKED);
 		if(!entities.isEmpty()) {
 			Map<String, Object> map = null;
 			for(TourBookingView entity : entities) {

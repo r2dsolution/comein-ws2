@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,11 +39,11 @@ public class TourDashboardController {
         return ResponseEntity.ok(res);
 	}
 	
-	@GetMapping("/tour-dashboards/{companyId}")
-	public ResponseEntity<List<Map<String, Object>>> getTourDashboardBookingInfo(@PathVariable Long companyId) {
+	@PostMapping("/tour-dashboards/{companyId}")
+	public ResponseEntity<List<Map<String, Object>>> getTourDashboardBookingInfo(@PathVariable Long companyId, @RequestBody DashboardReq req) {
 		log.info("getTourDashboardBookingInfo.....companyId : {}", companyId);
 		
-		List<Map<String, Object>> res = this.tourDashboardService.getTourBooking(companyId);
+		List<Map<String, Object>> res = this.tourDashboardService.getTourBooking(companyId, req);
 		
         return ResponseEntity.ok(res);
 	}

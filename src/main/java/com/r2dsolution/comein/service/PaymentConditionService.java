@@ -12,6 +12,7 @@ import com.r2dsolution.comein.dao.PaymentConditionDefaultRepository;
 import com.r2dsolution.comein.dto.PaymentConditionDto;
 import com.r2dsolution.comein.entity.PaymentConditionCompany;
 import com.r2dsolution.comein.entity.PaymentConditionDefault;
+import com.r2dsolution.comein.exception.ServiceException;
 
 @Service
 public class PaymentConditionService {
@@ -34,6 +35,8 @@ public class PaymentConditionService {
 			PaymentConditionDefault entity = entities.get(0);
 			response.setPayableDay(entity.getPayableDay());
 			response.setPayableTourDay(entity.getPayableTourDay());
+		} else {
+			throw new ServiceException("Data not found.");
 		}
 		
 		return response;
@@ -51,6 +54,8 @@ public class PaymentConditionService {
 			response.setUseDefault(entity.getUseDefault());
 			response.setPayableDay(entity.getPayableDay());
 			response.setPayableTourDay(entity.getPayableTourDay());
+		} else {
+			throw new ServiceException("Data not found.");
 		}
 		
 		return response;

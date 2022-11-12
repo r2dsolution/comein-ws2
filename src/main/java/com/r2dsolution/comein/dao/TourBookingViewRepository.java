@@ -1,5 +1,6 @@
 package com.r2dsolution.comein.dao;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -11,6 +12,6 @@ public interface TourBookingViewRepository extends JpaSpecificationExecutor<Tour
 
 	TourBookingView findFirstByBookingCodeAndStatus(String bookingCode, String status);
 	
-	List<TourBookingView> findByCompanyIdAndStatus(Long companyId, String status);
+	List<TourBookingView> findByCompanyIdAndTourDateAndStatus(Long companyId, LocalDate tourDate, String status);
 }
 
