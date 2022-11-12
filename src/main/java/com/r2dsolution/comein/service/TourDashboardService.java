@@ -112,4 +112,39 @@ public class TourDashboardService {
 
 		return response;
 	}
+	
+	public List<Map<String, Object>> getPaymentPeriods(Long companyId){
+		log.info("getTourBooking companyId : {}",companyId);
+		List<Map<String, Object>> response = new LinkedList<>();
+		
+		//TODO fix for test
+		Map<String, Object> map = null;
+		for(int i=1; i<=5; i++) {
+			map = new HashMap<>();
+			map.put("period_id", i);
+			map.put("period_desc", DateUtils.toStr(LocalDate.of(2022, 8, i), "dd/MMM/yyyy") + " - " + DateUtils.toStr(LocalDate.of(2022, 8, i+1), "dd/MMM/yyyy"));
+			
+			response.add(map);
+		}
+		
+//		List<TourBookingView> entities = tourBookingViewRepository.findByCompanyIdAndTourDateAndStatus(companyId, req.getTour_date(), Constant.STATUS_BOOKING_BOOKED);
+//		if(!entities.isEmpty()) {
+//			Map<String, Object> map = null;
+//			for(TourBookingView entity : entities) {
+//				map = new HashMap<>();
+//				map.put("booking_code", entity.getBookingCode());
+//				map.put("reference_name", entity.getReferenceName());
+//				map.put("total_child", entity.getTotalChild());
+//				map.put("total_adult", entity.getTotalAdult());
+//				map.put("status", entity.getStatus());
+//				map.put("remark", entity.getRemark());
+//				
+//				response.add(map);
+//			}
+//		} else {
+//			throw new ServiceException("Data not found.");
+//		}
+
+		return response;
+	}
 }

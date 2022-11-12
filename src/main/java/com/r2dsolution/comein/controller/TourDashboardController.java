@@ -48,4 +48,13 @@ public class TourDashboardController {
         return ResponseEntity.ok(res);
 	}
 	
+	@PostMapping("/tour-dashboards/{companyId}/periods")
+	public ResponseEntity<List<Map<String, Object>>> getTourDashboardPaymentPeriod(@PathVariable Long companyId) {
+		log.info("getTourDashboardPaymentPeriod.....companyId : {}", companyId);
+		
+		List<Map<String, Object>> res = this.tourDashboardService.getPaymentPeriods(companyId);
+		
+        return ResponseEntity.ok(res);
+	}
+	
 }
