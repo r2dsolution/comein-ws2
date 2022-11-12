@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,8 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.r2dsolution.comein.dao.DashboardTourBookingRepository;
+import com.r2dsolution.comein.dao.TourBookingViewRepository;
 import com.r2dsolution.comein.dto.DashboardReq;
 import com.r2dsolution.comein.entity.DashboardTourBooking;
+import com.r2dsolution.comein.entity.TourBookingView;
+import com.r2dsolution.comein.exception.ServiceException;
+import com.r2dsolution.comein.util.Constant;
 import com.r2dsolution.comein.util.DateUtils;
 
 
@@ -28,6 +33,8 @@ public class TourDashboardService {
 	@Autowired
 	private DashboardTourBookingRepository dashboardRepository;
 
+	@Autowired
+	private TourBookingViewRepository tourBookingViewRepository;
 	
 	public List<Map<String, Object>> searchDashboard(String userToken, DashboardReq req){
 		log.info("searchDashboard userToken : {}, tourCompanyId : {}, dateFrom : {}, dateTo : {}", userToken, req.getTour_company_id(), req.getDate_from(), req.getDate_to());
@@ -81,4 +88,28 @@ public class TourDashboardService {
 		return response;
 	}
 	
+	public List<Map<String, Object>> getTourBooking(Long companyId){
+		log.info("getTourBooking companyId : {}",companyId);
+		List<Map<String, Object>> response = new LinkedList<>();
+		
+		List<TourBookingView> entities = tourBookingViewRepository.findByCompanyIdAndStatus(companyId, Constant.STATUS_BOOKING_BOOKED);
+		if(!entities.isEmpty()) {
+			Map<String, Object> map = null;
+			for(TourBookingView entity : entities) {
+				map = new HashMap<>();
+				map.put("booking_code", entity.getBookingCode());
+				map.put("reference_name", entity.getReferenceName());
+				map.put("total_child", entity.getTotalChild());
+				map.put("total_adult", entity.getTotalAdult());
+				map.put("status", entity.getStatus());
+				map.put("remark", entity.getRemark());
+				
+				response.add(map);
+			}
+		} else {
+			throw new ServiceException("Data not found.");
+		}
+
+		return response;
+	}
 }

@@ -2,6 +2,8 @@ package com.r2dsolution.comein.controller;
 
 
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,10 @@ public class TopUpRateController {
 	private TopUpRateService topUpRateService;
 	
 	@GetMapping("/topuprates")
-	public ResponseEntity<TopUpRateDetailDto> getDefaultTopUpRate() {
+	public ResponseEntity<List<TopUpRateDetailDto>> getDefaultTopUpRate() {
 		log.info("getDefaultTopUpRate.....");
 		
-		TopUpRateDetailDto res = this.topUpRateService.searchDefaultTopUpRate();
+		List<TopUpRateDetailDto> res = this.topUpRateService.searchDefaultTopUpRate();
 		
         return ResponseEntity.ok(res);
 	}
@@ -47,7 +49,7 @@ public class TopUpRateController {
 	}
         
 	@PostMapping("/topuprates")
-	public ResponseEntity<Void> saveDefaultTopUpRate(@RequestHeader(ATTR_USER_TOKEN) String userToken, @RequestBody TopUpRateDetailDto req) {
+	public ResponseEntity<Void> saveDefaultTopUpRate(@RequestHeader(ATTR_USER_TOKEN) String userToken, @RequestBody List<TopUpRateDetailDto> req) {
 		log.info("saveDefaultTopUpRate.....");
 			
 		this.topUpRateService.saveDefaultTopUpRate(req, userToken);

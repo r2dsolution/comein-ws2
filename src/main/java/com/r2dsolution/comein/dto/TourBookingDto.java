@@ -6,6 +6,7 @@ import java.time.LocalDate;
 public class TourBookingDto {
 	
 	private Long id;
+	private Long companyId;
 	private Long ticketId;
 	private String bookingCode;
 	private String referenceName;
@@ -139,6 +140,12 @@ public class TourBookingDto {
 	}
 	public void setCancelBefore(int cancelBefore) {
 		this.cancelBefore = cancelBefore;
+	}
+	public Long getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
 	}
 
     

@@ -28,6 +28,8 @@ public class TourBookingView implements Serializable {
     @Id
     @Column(unique=true, nullable=false, precision=19)
     private long id;
+    @Column(name="company_id", nullable=false)
+    private long companyId;
     @Column(name="booking_code", nullable=false)
     private String bookingCode;
     @Column(name="owner_id", nullable=false)
@@ -348,6 +350,14 @@ public class TourBookingView implements Serializable {
 
 	public void setCancelBefore(int cancelBefore) {
 		this.cancelBefore = cancelBefore;
+	}
+
+	public long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(long companyId) {
+		this.companyId = companyId;
 	}
 
 }
