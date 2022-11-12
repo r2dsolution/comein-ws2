@@ -25,7 +25,7 @@ public class TourDashboardController {
 	private static Logger log = LoggerFactory.getLogger(TourDashboardController.class);
 	
 	private static final String ATTR_USER_TOKEN = "userToken";
-	
+
 	@Autowired
 	private TourDashboardService tourDashboardService;
 	

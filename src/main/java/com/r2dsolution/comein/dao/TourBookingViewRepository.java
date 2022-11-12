@@ -13,5 +13,7 @@ public interface TourBookingViewRepository extends JpaSpecificationExecutor<Tour
 	TourBookingView findFirstByBookingCodeAndStatus(String bookingCode, String status);
 	
 	List<TourBookingView> findByCompanyIdAndTourDateAndStatus(Long companyId, LocalDate tourDate, String status);
+	
+	List<TourBookingView> findByCompanyIdAndTourDateGreaterThanEqualAndTourDateLessThanEqualAndStatus(Long companyId, LocalDate dateFrom, LocalDate dateTo, String status);
 }
 
