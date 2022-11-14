@@ -39,11 +39,11 @@ public class TourDashboardController {
         return ResponseEntity.ok(res);
 	}
 	
-	@PostMapping("/tour-dashboards/{companyId}")
-	public ResponseEntity<List<Map<String, Object>>> getTourDashboardBookingInfo(@PathVariable Long companyId, @RequestBody DashboardReq req) {
-		log.info("getTourDashboardBookingInfo.....companyId : {}", companyId);
+	@PostMapping("/tour-dashboards/{tourId}")
+	public ResponseEntity<List<Map<String, Object>>> getTourDashboardBookingInfo(@PathVariable Long tourId, @RequestBody DashboardReq req) {
+		log.info("getTourDashboardBookingInfo.....tourId : {}", tourId);
 		
-		List<Map<String, Object>> res = this.tourDashboardService.getTourBooking(companyId, req);
+		List<Map<String, Object>> res = this.tourDashboardService.getTourBooking(tourId, req);
 		
         return ResponseEntity.ok(res);
 	}
