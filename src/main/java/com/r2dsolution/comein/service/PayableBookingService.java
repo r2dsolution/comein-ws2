@@ -10,18 +10,29 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.r2dsolution.comein.dao.AccountInfoRepository;
+import com.r2dsolution.comein.dao.AccountingTransactionRepository;
+import com.r2dsolution.comein.dao.PayTransactionRepository;
 import com.r2dsolution.comein.dao.PayableBookingViewRepository;
+import com.r2dsolution.comein.dao.PayablePeriodRepository;
+import com.r2dsolution.comein.dao.ReceiveTransactionRepository;
 import com.r2dsolution.comein.dao.TopUpRateCompanyRepository;
 import com.r2dsolution.comein.dao.TopUpRateDefaultRepository;
 import com.r2dsolution.comein.dto.HotelPayableNoteDto;
 import com.r2dsolution.comein.dto.PayableBookingDetailDto;
 import com.r2dsolution.comein.dto.PayableBookingDto;
+import com.r2dsolution.comein.dto.PayablePeriodDto;
 import com.r2dsolution.comein.dto.ReceivableNoteDto;
 import com.r2dsolution.comein.dto.TourPayableNoteDto;
+import com.r2dsolution.comein.entity.AccountingTransaction;
+import com.r2dsolution.comein.entity.PayTransaction;
 import com.r2dsolution.comein.entity.PayableBookingView;
+import com.r2dsolution.comein.entity.PayablePeriod;
+import com.r2dsolution.comein.entity.ReceiveTransaction;
 import com.r2dsolution.comein.entity.TopupRateCompany;
 import com.r2dsolution.comein.entity.TopupRateDefault;
 import com.r2dsolution.comein.exception.ServiceException;
+import com.r2dsolution.comein.util.DateUtils;
 
 @Service
 public class PayableBookingService {
@@ -37,6 +48,21 @@ public class PayableBookingService {
 	@Autowired
 	private TopUpRateCompanyRepository topUpRateCompanyRepository;
 	
+	@Autowired
+	private AccountingTransactionRepository accountingTransactionRepository;
+	
+	@Autowired
+	private ReceiveTransactionRepository receiveTransactionRepository;
+
+	@Autowired
+	private PayTransactionRepository payTransactionRepository;
+
+	@Autowired
+	private AccountInfoRepository accountInfoRepository;
+
+	@Autowired
+	private PayablePeriodRepository payablePeriodRepository;
+
 	public List<PayableBookingDto> getPayableTourBooking(){
 		log.info("getPayableTourBooking ...");
 		List<PayableBookingDto> response = new ArrayList<>();;
@@ -134,8 +160,93 @@ public class PayableBookingService {
 	public void savePayableTourBookingByBookingCode(String bookingCode, PayableBookingDetailDto req){
 		log.info("savePayableTourBookingByBookingCode bookingCode : {}", bookingCode);
 		
-		//TODO savePayable
-		
+		PayableBookingView entity = payableBookingViewRepository.findFirstByBookingCode(bookingCode);
+		if(entity != null) {
+			ReceivableNoteDto comeinNoteDto = req.getReceivableNote();
+			TourPayableNoteDto tourNoteDto = req.getTourPayableNote();
+			HotelPayableNoteDto hotelNoteDto = req.getHotelPayableNote();
+			Long companyId = entity.getCompanyId();
+			LocalDate tourDate = entity.getTourDate();
+			LocalDate paymentDate = entity.getPaymentDate();
+			String paymentMethod = entity.getPaymentMethod();
+			BigDecimal sellValue = entity.getTotalSellValue();
+			
+			//TODO get default account info (MOCK)
+			String accountRefComeIn = "COMEIN_01";
+			String accountRefHotel = "HOTEL_01";
+			String accountRefTour = "TOUR_01";
+			
+			AccountingTransaction accountingTransaction = new AccountingTransaction();
+			accountingTransaction.setCompanyId(companyId);
+			accountingTransaction.setBookingCode(bookingCode);
+			accountingTransaction.setTourDate(tourDate);
+			accountingTransaction.setPaymentDate(paymentDate);
+			accountingTransaction.setPaymentMethod(paymentMethod);
+			accountingTransaction.setSellValue(sellValue);
+			accountingTransaction = this.accountingTransactionRepository.save(accountingTransaction);
+			long accountingTransactionId = accountingTransaction.getId();
+			
+			ReceiveTransaction receiveTransaction = new ReceiveTransaction();
+			receiveTransaction.setAccountingId(accountingTransactionId);
+			receiveTransaction.setDetail("Transaction receive by "+paymentMethod);
+			receiveTransaction.setTransactionDate(paymentDate);
+			receiveTransaction.setValue(sellValue);
+			receiveTransaction.setAccountRef(accountRefComeIn);
+			receiveTransaction.setNote(comeinNoteDto.getNote());
+			this.receiveTransactionRepository.save(receiveTransaction);
+
+			PayTransaction payTransaction = new PayTransaction();
+			payTransaction.setAccountingId(accountingTransactionId);
+			payTransaction.setDetail("Tour Rate");
+			payTransaction.setTransactionDate(paymentDate);
+			payTransaction.setValue(sellValue);
+			payTransaction.setAccountRef(accountRefTour);
+			payTransaction.setPayType("Tour");
+			payTransaction.setNote(tourNoteDto.getNote());
+			payTransaction = this.payTransactionRepository.save(payTransaction);
+			long payTransactionId = payTransaction.getId();
+			
+			PayablePeriod payablePeriod = null;
+			for(PayablePeriodDto dto : tourNoteDto.getPeriods()) {
+				payablePeriod = new PayablePeriod();
+				payablePeriod.setPayId(payTransactionId);
+				payablePeriod.setPeriodType("Tour");
+				payablePeriod.setDateFrom(dto.getFrom());
+				payablePeriod.setDateTo(dto.getTo());
+				payablePeriod.setPeriodDesc(DateUtils.toStr(dto.getFrom(), "dd/MMM/yyyy") + " - " + DateUtils.toStr(dto.getTo(), "dd/MMM/yyyy"));
+
+				this.payablePeriodRepository.save(payablePeriod);
+			}
+
+			if(hotelNoteDto != null && hotelNoteDto.getPeriods() != null && !hotelNoteDto.getPeriods().isEmpty()) {
+				PayTransaction payTransactionHotel = new PayTransaction();
+				payTransactionHotel.setAccountingId(accountingTransactionId);
+				payTransactionHotel.setDetail("Hotel Rate");
+				payTransactionHotel.setTransactionDate(paymentDate);
+				payTransactionHotel.setValue(sellValue);
+				payTransactionHotel.setAccountRef(accountRefHotel);
+				payTransactionHotel.setPayType("Hotel");
+				payTransactionHotel.setNote(hotelNoteDto.getNote());
+				payTransactionHotel = this.payTransactionRepository.save(payTransactionHotel);
+				long payTransactionHotelId = payTransactionHotel.getId();
+				
+				PayablePeriod payablePeriodHotel = null;
+				for(PayablePeriodDto dto : tourNoteDto.getPeriods()) {
+					payablePeriodHotel = new PayablePeriod();
+					payablePeriodHotel.setPayId(payTransactionHotelId);
+					payablePeriodHotel.setPeriodType("Hotel");
+					payablePeriodHotel.setDateFrom(dto.getFrom());
+					payablePeriodHotel.setDateTo(dto.getTo());
+					payablePeriodHotel.setPeriodDesc(DateUtils.toStr(dto.getFrom(), "dd/MMM/yyyy") + " - " + DateUtils.toStr(dto.getTo(), "dd/MMM/yyyy"));
+
+					this.payablePeriodRepository.save(payablePeriodHotel);
+				}
+			}
+			
+		} else {
+			throw new ServiceException("Data not found.");
+		}
+
 		
 	}
 	
