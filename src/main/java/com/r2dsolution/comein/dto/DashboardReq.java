@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class DashboardReq {
 	private long dashboard_id;
     private long tour_company_id;
+    private long tour_id;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate date_from;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
@@ -43,6 +44,12 @@ public class DashboardReq {
 	}
 	public void setTour_date(LocalDate tour_date) {
 		this.tour_date = tour_date;
+	}
+	public long getTour_id() {
+		return tour_id;
+	}
+	public void setTour_id(long tour_id) {
+		this.tour_id = tour_id;
 	}
 
 }

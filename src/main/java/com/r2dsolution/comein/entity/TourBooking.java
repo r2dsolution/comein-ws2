@@ -64,6 +64,10 @@ public class TourBooking implements Serializable {
     private LocalDate tourDate;
     @Column(name="sell_value")
     private BigDecimal sellValue;
+    @Column(name="company_id")
+    private long companyId;
+    @Column(name="tour_id")
+    private long tourId;
     
     /** Default constructor. */
     public TourBooking() {
@@ -412,6 +416,22 @@ public class TourBooking implements Serializable {
 
 	public void setSellValue(BigDecimal sellValue) {
 		this.sellValue = sellValue;
+	}
+
+	public long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(long companyId) {
+		this.companyId = companyId;
+	}
+
+	public long getTourId() {
+		return tourId;
+	}
+
+	public void setTourId(long tourId) {
+		this.tourId = tourId;
 	}
 
 }

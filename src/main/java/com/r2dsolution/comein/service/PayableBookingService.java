@@ -131,4 +131,12 @@ public class PayableBookingService {
 		return response;
 	}
 
+	public void savePayableTourBookingByBookingCode(String bookingCode, PayableBookingDetailDto req){
+		log.info("savePayableTourBookingByBookingCode bookingCode : {}", bookingCode);
+		
+		//TODO savePayable
+		
+		
+	}
+	
 }

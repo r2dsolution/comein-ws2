@@ -7,11 +7,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import com.r2dsolution.comein.dto.OtaBookingDto;
 import com.r2dsolution.comein.dto.PayableBookingDetailDto;
 import com.r2dsolution.comein.dto.PayableBookingDto;
 import com.r2dsolution.comein.service.PayableBookingService;
@@ -43,5 +47,13 @@ public class PayableBookingController {
         return ResponseEntity.ok(res);
 	}
 	
+	@PostMapping("/payable-bookings/{bookingCode}")
+	public ResponseEntity<Void> savePayableBookingByCode(@PathVariable String bookingCode, @RequestBody PayableBookingDetailDto req) {
+		log.info("Start savePayableBookingByCode.....code : {}", bookingCode);
+		
+		this.payableBookingService.savePayableTourBookingByBookingCode(bookingCode, req);
+		
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 	
 }

@@ -50,6 +50,8 @@ public class TourBookingView implements Serializable {
     private String paymentMethod;
     private String remark;
     private String status;
+    @Column(name="tour_id", nullable=false)
+    private long tourId;
     @Column(name="tour_name")
     private String tourName;
     @Column(name="tour_date", nullable=false)
@@ -358,6 +360,14 @@ public class TourBookingView implements Serializable {
 
 	public void setCompanyId(long companyId) {
 		this.companyId = companyId;
+	}
+
+	public long getTourId() {
+		return tourId;
+	}
+
+	public void setTourId(long tourId) {
+		this.tourId = tourId;
 	}
 
 }
