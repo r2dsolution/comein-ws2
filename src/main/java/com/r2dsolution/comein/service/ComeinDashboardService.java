@@ -10,11 +10,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.r2dsolution.comein.dao.TourBookingViewRepository;
+import com.r2dsolution.comein.dao.CompanyBookingSummaryRepository;
 import com.r2dsolution.comein.dto.DashboardReq;
-import com.r2dsolution.comein.entity.TourBookingView;
+import com.r2dsolution.comein.entity.CompanyBookingSummary;
 import com.r2dsolution.comein.exception.ServiceException;
 import com.r2dsolution.comein.util.Constant;
+import com.r2dsolution.comein.util.DateUtils;
 
 
 @Service
@@ -23,23 +24,23 @@ public class ComeinDashboardService {
 	private static Logger log = LoggerFactory.getLogger(ComeinDashboardService.class);
 	
 	@Autowired
-	private TourBookingViewRepository tourBookingViewRepository;
+	private CompanyBookingSummaryRepository companyBookingSummaryRepository;
 	
 	public List<Map<String, Object>> getTourBooking(Long companyId, DashboardReq req){
 		log.info("getTourBooking companyId : {}",companyId);
 		List<Map<String, Object>> response = new LinkedList<>();
 		
-		List<TourBookingView> entities = tourBookingViewRepository.findByCompanyIdAndTourDateGreaterThanEqualAndTourDateLessThanEqualAndStatus(companyId, req.getDate_from(), req.getDate_to(), Constant.STATUS_BOOKING_BOOKED);
+		List<CompanyBookingSummary> entities = companyBookingSummaryRepository.findByCompanyIdAndTourDateGreaterThanEqualAndTourDateLessThanEqualAndStatus(companyId, req.getDate_from(), req.getDate_to(), Constant.STATUS_BOOKING_BOOKED);
 		if(!entities.isEmpty()) {
 			Map<String, Object> map = null;
-			for(TourBookingView entity : entities) {
+			for(CompanyBookingSummary entity : entities) {
 				map = new HashMap<>();
 				map.put("booking_code", entity.getBookingCode());
 				map.put("reference_name", entity.getReferenceName());
-				map.put("total_child", entity.getTotalChild());
-				map.put("total_adult", entity.getTotalAdult());
+				map.put("tour_date", DateUtils.toStr(entity.getTourDate(), DateUtils.YYYYMMDD));
+				map.put("tour_name", entity.getTourName());
+				map.put("sell_value", entity.getTotalSellValue());
 				map.put("status", entity.getStatus());
-				map.put("remark", entity.getRemark());
 				
 				response.add(map);
 			}
