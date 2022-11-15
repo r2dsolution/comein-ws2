@@ -2,21 +2,22 @@ package com.r2dsolution.comein.controller;
 
 
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.r2dsolution.comein.dto.PayableCompanyDto;
-import com.r2dsolution.comein.service.TourInfoService;
+import com.r2dsolution.comein.service.PayableCompanyService;
 
 @Controller
 public class PayableCompanyController {
@@ -26,67 +27,24 @@ public class PayableCompanyController {
 	private static final String ATTR_USER_TOKEN = "userToken";
 	
 	@Autowired
-	private TourInfoService tourInfoService;
+	private PayableCompanyService payableCompanyService;
 	
 	@GetMapping("/payable-companies/{companyId}")
 	public ResponseEntity<List<PayableCompanyDto>> getPayableCompanyById(@PathVariable Long companyId) {
 		log.info("Start getPayableCompanyById.....code : {}", companyId);
 		
-//		TourInfoDto res = this.tourInfoService.getTourInfo(id);
-		//TODO mock Test
-		List<PayableCompanyDto> res = new ArrayList<>();
-		
-		PayableCompanyDto dto = new PayableCompanyDto();
-		dto.setPeriodId(1L);
-		dto.setDateFrom(LocalDate.of(2022, 1, 1));
-		dto.setDateTo(LocalDate.of(2022, 1, 15));
-		dto.setBookingCode("B94239");
-		dto.setTourName("spider man");
-		dto.setTourDate(LocalDate.of(2022, 1, 1));
-		dto.setStatus("Open");
-		dto.setNetValue(BigDecimal.valueOf(2000));
-		dto.setTotal(BigDecimal.valueOf(43450));
-		res.add(dto);
-		
-		dto = new PayableCompanyDto();
-		dto.setPeriodId(1L);
-		dto.setDateFrom(LocalDate.of(2022, 1, 1));
-		dto.setDateTo(LocalDate.of(2022, 1, 15));
-		dto.setBookingCode("B30928");
-		dto.setTourName("Avenger Team");
-		dto.setTourDate(LocalDate.of(2022, 1, 1));
-		dto.setStatus("Open");
-		dto.setNetValue(BigDecimal.valueOf(10000));
-		dto.setTotal(BigDecimal.valueOf(43450));
-		res.add(dto);
-		
-		dto = new PayableCompanyDto();
-		dto.setPeriodId(1L);
-		dto.setDateFrom(LocalDate.of(2022, 1, 1));
-		dto.setDateTo(LocalDate.of(2022, 1, 15));
-		dto.setBookingCode("B38372");
-		dto.setTourName("Iron man");
-		dto.setTourDate(LocalDate.of(2022, 1, 3));
-		dto.setStatus("Open");
-		dto.setNetValue(BigDecimal.valueOf(1500));
-		dto.setTotal(BigDecimal.valueOf(43450));
-		res.add(dto);
-		
-		dto = new PayableCompanyDto();
-		dto.setPeriodId(1L);
-		dto.setDateFrom(LocalDate.of(2022, 1, 1));
-		dto.setDateTo(LocalDate.of(2022, 1, 15));
-		dto.setBookingCode("B39870");
-		dto.setTourName("Ant man");
-		dto.setTourDate(LocalDate.of(2022, 1, 8));
-		dto.setStatus("Open");
-		dto.setNetValue(BigDecimal.valueOf(9500));
-		dto.setTotal(BigDecimal.valueOf(43450));
-		res.add(dto);
-		
+		List<PayableCompanyDto> res = this.payableCompanyService.getPayableTourByCompanyId(companyId);
 		
         return ResponseEntity.ok(res);
 	}
 	
+	@PostMapping("/payable-companies/{companyId}")
+	public ResponseEntity<Void> savePayableCompanyById(@PathVariable Long companyId, @RequestBody Map<String, Object> req) {
+		log.info("Start savePayableCompanyById.....companyId : {}", companyId);
+		
+		this.payableCompanyService.savePayableCompanyById(companyId, req);
+		
+		return new ResponseEntity<Void>(HttpStatus.OK);
+	}
 	
 }
