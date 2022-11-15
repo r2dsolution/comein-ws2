@@ -38,6 +38,8 @@ public class PayablePeriod implements Serializable {
     private String periodDesc;
     @Column(name="pay_id", nullable=false)
     private long payId;
+    private String status;
+    private String note;
 
     /** Default constructor. */
     public PayablePeriod() {
@@ -210,6 +212,22 @@ public class PayablePeriod implements Serializable {
 
 	public void setPayId(long payId) {
 		this.payId = payId;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
 	}
 
 }

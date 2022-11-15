@@ -32,6 +32,8 @@ public class PayableBookingView implements Serializable {
     private String bookingCode;
     @Column(name="tour_date", nullable=false)
     private LocalDate tourDate;
+    @Column(name="tour_name")
+    private String tourName;
     private String status;
     @Column(name="payment_date", nullable=false)
     private LocalDate paymentDate;
@@ -107,6 +109,14 @@ public class PayableBookingView implements Serializable {
 
 	public void setTotalSellValue(BigDecimal totalSellValue) {
 		this.totalSellValue = totalSellValue;
+	}
+
+	public String getTourName() {
+		return tourName;
+	}
+
+	public void setTourName(String tourName) {
+		this.tourName = tourName;
 	}
 
 

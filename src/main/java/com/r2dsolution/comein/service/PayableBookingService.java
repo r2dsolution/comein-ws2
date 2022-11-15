@@ -167,6 +167,7 @@ public class PayableBookingService {
 			HotelPayableNoteDto hotelNoteDto = req.getHotelPayableNote();
 			Long companyId = entity.getCompanyId();
 			LocalDate tourDate = entity.getTourDate();
+			String tourName = entity.getTourName();
 			LocalDate paymentDate = entity.getPaymentDate();
 			String paymentMethod = entity.getPaymentMethod();
 			BigDecimal sellValue = entity.getTotalSellValue();
@@ -180,6 +181,7 @@ public class PayableBookingService {
 			accountingTransaction.setCompanyId(companyId);
 			accountingTransaction.setBookingCode(bookingCode);
 			accountingTransaction.setTourDate(tourDate);
+			accountingTransaction.setTourName(tourName);
 			accountingTransaction.setPaymentDate(paymentDate);
 			accountingTransaction.setPaymentMethod(paymentMethod);
 			accountingTransaction.setSellValue(sellValue);

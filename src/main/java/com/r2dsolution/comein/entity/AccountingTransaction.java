@@ -35,6 +35,8 @@ public class AccountingTransaction implements Serializable {
     private String bookingCode;
     @Column(name="tour_date", nullable=false)
     private LocalDate tourDate;
+    @Column(name="tour_name")
+    private String tourName;
     @Column(name="payment_date", nullable=false)
     private LocalDate paymentDate;
     @Column(name="payment_method", nullable=false, length=50)
@@ -242,5 +244,13 @@ public class AccountingTransaction implements Serializable {
         ret.put("id", Long.valueOf(getId()));
         return ret;
     }
+
+	public String getTourName() {
+		return tourName;
+	}
+
+	public void setTourName(String tourName) {
+		this.tourName = tourName;
+	}
 
 }
