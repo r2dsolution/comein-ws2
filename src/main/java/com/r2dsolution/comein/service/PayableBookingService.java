@@ -211,6 +211,7 @@ public class PayableBookingService {
 			PayablePeriod payablePeriod = null;
 			for(PayablePeriodDto dto : tourNoteDto.getPeriods()) {
 				payablePeriod = new PayablePeriod();
+				payablePeriod.setCompanyId(companyId);
 				payablePeriod.setPayId(payTransactionId);
 				payablePeriod.setPeriodType("Tour");
 				payablePeriod.setDateFrom(dto.getFrom());
@@ -235,6 +236,7 @@ public class PayableBookingService {
 				PayablePeriod payablePeriodHotel = null;
 				for(PayablePeriodDto dto : tourNoteDto.getPeriods()) {
 					payablePeriodHotel = new PayablePeriod();
+					payablePeriodHotel.setCompanyId(companyId);
 					payablePeriodHotel.setPayId(payTransactionHotelId);
 					payablePeriodHotel.setPeriodType("Hotel");
 					payablePeriodHotel.setDateFrom(dto.getFrom());

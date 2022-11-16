@@ -16,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.r2dsolution.comein.dao.DashboardTourBookingRepository;
+import com.r2dsolution.comein.dao.PayablePeriodRepository;
 import com.r2dsolution.comein.dao.TourBookingViewRepository;
 import com.r2dsolution.comein.dto.DashboardReq;
 import com.r2dsolution.comein.entity.DashboardTourBooking;
+import com.r2dsolution.comein.entity.PayablePeriod;
 import com.r2dsolution.comein.entity.TourBookingView;
 import com.r2dsolution.comein.exception.ServiceException;
 import com.r2dsolution.comein.util.Constant;
@@ -35,6 +37,9 @@ public class TourDashboardService {
 
 	@Autowired
 	private TourBookingViewRepository tourBookingViewRepository;
+	
+	@Autowired
+	private PayablePeriodRepository payablePeriodRepository;
 	
 	public List<Map<String, Object>> searchDashboard(String userToken, DashboardReq req){
 		log.info("searchDashboard userToken : {}, tourCompanyId : {}, dateFrom : {}, dateTo : {}", userToken, req.getTour_company_id(), req.getDate_from(), req.getDate_to());
@@ -114,36 +119,22 @@ public class TourDashboardService {
 	}
 	
 	public List<Map<String, Object>> getPaymentPeriods(Long companyId){
-		log.info("getTourBooking companyId : {}",companyId);
+		log.info("getPaymentPeriods companyId : {}",companyId);
 		List<Map<String, Object>> response = new LinkedList<>();
 		
-		//TODO fix for test
-		Map<String, Object> map = null;
-		for(int i=1; i<=5; i++) {
-			map = new HashMap<>();
-			map.put("period_id", i);
-			map.put("period_desc", DateUtils.toStr(LocalDate.of(2022, 8, i), "dd/MMM/yyyy") + " - " + DateUtils.toStr(LocalDate.of(2022, 8, i+1), "dd/MMM/yyyy"));
-			
-			response.add(map);
+		List<PayablePeriod> entities = payablePeriodRepository.findByCompanyIdAndPeriodTypeAndStatus(companyId, "Tour", "Close");
+		if(!entities.isEmpty()) {
+			Map<String, Object> map = null;
+			for(PayablePeriod entity : entities) {
+				map = new HashMap<>();
+				map.put("period_id", entity.getId());
+				map.put("period_desc", entity.getPeriodDesc());
+				
+				response.add(map);
+			}
+		} else {
+			throw new ServiceException("Data not found.");
 		}
-		
-//		List<TourBookingView> entities = tourBookingViewRepository.findByCompanyIdAndTourDateAndStatus(companyId, req.getTour_date(), Constant.STATUS_BOOKING_BOOKED);
-//		if(!entities.isEmpty()) {
-//			Map<String, Object> map = null;
-//			for(TourBookingView entity : entities) {
-//				map = new HashMap<>();
-//				map.put("booking_code", entity.getBookingCode());
-//				map.put("reference_name", entity.getReferenceName());
-//				map.put("total_child", entity.getTotalChild());
-//				map.put("total_adult", entity.getTotalAdult());
-//				map.put("status", entity.getStatus());
-//				map.put("remark", entity.getRemark());
-//				
-//				response.add(map);
-//			}
-//		} else {
-//			throw new ServiceException("Data not found.");
-//		}
 
 		return response;
 	}

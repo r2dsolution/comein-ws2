@@ -40,7 +40,9 @@ public class PayablePeriod implements Serializable {
     private long payId;
     private String status;
     private String note;
-
+    @Column(name="company_id", nullable=false)
+    private Long companyId;
+    
     /** Default constructor. */
     public PayablePeriod() {
         super();
@@ -228,6 +230,14 @@ public class PayablePeriod implements Serializable {
 
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	public Long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
 	}
 
 }
