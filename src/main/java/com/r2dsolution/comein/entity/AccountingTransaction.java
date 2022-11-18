@@ -43,6 +43,10 @@ public class AccountingTransaction implements Serializable {
     private String paymentMethod;
     @Column(name="sell_value", precision=131089)
     private BigDecimal sellValue;
+    @Column(name="tour_id", precision=19)
+    private long tourId;
+    @Column(name="reference_name")
+    private String referenceName;
 
     /** Default constructor. */
     public AccountingTransaction() {
@@ -251,6 +255,22 @@ public class AccountingTransaction implements Serializable {
 
 	public void setTourName(String tourName) {
 		this.tourName = tourName;
+	}
+
+	public long getTourId() {
+		return tourId;
+	}
+
+	public void setTourId(long tourId) {
+		this.tourId = tourId;
+	}
+
+	public String getReferenceName() {
+		return referenceName;
+	}
+
+	public void setReferenceName(String referenceName) {
+		this.referenceName = referenceName;
 	}
 
 }

@@ -57,4 +57,22 @@ public class TourDashboardController {
         return ResponseEntity.ok(res);
 	}
 	
+	@PostMapping("/tour-pay-dashboards/{periodId}")
+	public ResponseEntity<List<Map<String, Object>>> searchPayableDashboard(@RequestHeader(ATTR_USER_TOKEN) String userToken, @PathVariable Long periodId) {
+		log.info("Start searchDashboard...periodId : {}", periodId);
+		
+		List<Map<String, Object>> res = this.tourDashboardService.searchPayableDashboard(userToken, periodId);
+		
+        return ResponseEntity.ok(res);
+	}
+	
+	@PostMapping("/tour-pay-dashboards/{periodId}/details")
+	public ResponseEntity<List<Map<String, Object>>> searchPayableDashboardDetail(@RequestHeader(ATTR_USER_TOKEN) String userToken, @PathVariable Long periodId) {
+		log.info("Start searchDashboard...periodId : {}", periodId);
+		
+		List<Map<String, Object>> res = this.tourDashboardService.searchPayableDashboardDetail(userToken, periodId);
+		
+        return ResponseEntity.ok(res);
+	}
+	
 }

@@ -32,7 +32,7 @@ public class PayableCompanyService {
 		log.info("getPayableTourByCompanyId companyId : {}", companyId);
 		List<PayableCompanyDto> response = new ArrayList<>();;
 		
-		List<PayableTourView> entities = payableTourViewRepository.findByCompanyId(companyId);
+		List<PayableTourView> entities = payableTourViewRepository.findByCompanyIdAndStatus(companyId, "Open");
 		if(!entities.isEmpty()) {
 			PayableCompanyDto dto = null;
 			for(PayableTourView entity : entities) {

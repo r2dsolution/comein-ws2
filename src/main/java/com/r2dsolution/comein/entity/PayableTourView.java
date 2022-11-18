@@ -44,6 +44,8 @@ public class PayableTourView implements Serializable {
     private BigDecimal netValue;
     @Column(name="period_id", nullable=false)
     private long periodId;
+    @Column(name="reference_name")
+    private String referenceName;
     
     /** Default constructor. */
     public PayableTourView() {
@@ -158,6 +160,16 @@ public class PayableTourView implements Serializable {
 
 	public void setPeriodId(long periodId) {
 		this.periodId = periodId;
+	}
+
+
+	public String getReferenceName() {
+		return referenceName;
+	}
+
+
+	public void setReferenceName(String referenceName) {
+		this.referenceName = referenceName;
 	}
 
 

@@ -41,6 +41,10 @@ public class PayableBookingView implements Serializable {
     private String paymentMethod;
     @Column(name="total_sell_value")
     private BigDecimal totalSellValue;
+    @Column(name="tour_id", precision=19)
+    private long tourId;
+    @Column(name="reference_name")
+    private String referenceName;
     
     /** Default constructor. */
     public PayableBookingView() {
@@ -117,6 +121,22 @@ public class PayableBookingView implements Serializable {
 
 	public void setTourName(String tourName) {
 		this.tourName = tourName;
+	}
+
+	public long getTourId() {
+		return tourId;
+	}
+
+	public void setTourId(long tourId) {
+		this.tourId = tourId;
+	}
+
+	public String getReferenceName() {
+		return referenceName;
+	}
+
+	public void setReferenceName(String referenceName) {
+		this.referenceName = referenceName;
 	}
 
 

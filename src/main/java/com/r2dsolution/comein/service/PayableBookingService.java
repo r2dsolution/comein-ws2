@@ -166,11 +166,13 @@ public class PayableBookingService {
 			TourPayableNoteDto tourNoteDto = req.getTourPayableNote();
 			HotelPayableNoteDto hotelNoteDto = req.getHotelPayableNote();
 			Long companyId = entity.getCompanyId();
+			Long tourId = entity.getTourId();
 			LocalDate tourDate = entity.getTourDate();
 			String tourName = entity.getTourName();
 			LocalDate paymentDate = entity.getPaymentDate();
 			String paymentMethod = entity.getPaymentMethod();
 			BigDecimal sellValue = entity.getTotalSellValue();
+			String referenceName = entity.getReferenceName();
 			
 			//TODO get default account info (MOCK)
 			String accountRefComeIn = "COMEIN_01";
@@ -185,6 +187,8 @@ public class PayableBookingService {
 			accountingTransaction.setPaymentDate(paymentDate);
 			accountingTransaction.setPaymentMethod(paymentMethod);
 			accountingTransaction.setSellValue(sellValue);
+			accountingTransaction.setTourId(tourId);
+			accountingTransaction.setReferenceName(referenceName);
 			accountingTransaction = this.accountingTransactionRepository.save(accountingTransaction);
 			long accountingTransactionId = accountingTransaction.getId();
 			

@@ -17,10 +17,12 @@ import org.springframework.stereotype.Service;
 
 import com.r2dsolution.comein.dao.DashboardTourBookingRepository;
 import com.r2dsolution.comein.dao.PayablePeriodRepository;
+import com.r2dsolution.comein.dao.PayableTourViewRepository;
 import com.r2dsolution.comein.dao.TourBookingViewRepository;
 import com.r2dsolution.comein.dto.DashboardReq;
 import com.r2dsolution.comein.entity.DashboardTourBooking;
 import com.r2dsolution.comein.entity.PayablePeriod;
+import com.r2dsolution.comein.entity.PayableTourView;
 import com.r2dsolution.comein.entity.TourBookingView;
 import com.r2dsolution.comein.exception.ServiceException;
 import com.r2dsolution.comein.util.Constant;
@@ -40,6 +42,9 @@ public class TourDashboardService {
 	
 	@Autowired
 	private PayablePeriodRepository payablePeriodRepository;
+	
+	@Autowired
+	private PayableTourViewRepository payableTourViewRepository;
 	
 	public List<Map<String, Object>> searchDashboard(String userToken, DashboardReq req){
 		log.info("searchDashboard userToken : {}, tourCompanyId : {}, dateFrom : {}, dateTo : {}", userToken, req.getTour_company_id(), req.getDate_from(), req.getDate_to());
@@ -134,6 +139,49 @@ public class TourDashboardService {
 			}
 		} else {
 			throw new ServiceException("Data not found.");
+		}
+
+		return response;
+	}
+	
+	public List<Map<String, Object>> searchPayableDashboard(String userToken, Long periodId){
+		log.info("searchDashboard userToken : {}, periodId : {}", userToken, periodId);
+		List<Map<String, Object>> response = new ArrayList<>();
+		
+		List<Object[]> entities = payableTourViewRepository.sumPayableTourByPeriod(periodId, "Close");
+		if(!entities.isEmpty()) {
+			Map<String, Object> data = null;
+			for(Object[] objs : entities) {
+				data = new HashMap<>();
+				data.put("period_id", objs[0]);
+				data.put("tour_name", objs[1]);
+				data.put("note", objs[2]);
+				data.put("total_net_value", objs[3]);
+				
+				response.add(data);
+			}
+		}
+
+		return response;
+	}
+	
+	public List<Map<String, Object>> searchPayableDashboardDetail(String userToken, Long periodId){
+		log.info("searchDashboard userToken : {}, periodId : {}", userToken, periodId);
+		List<Map<String, Object>> response = new ArrayList<>();
+		
+		List<PayableTourView> entities = payableTourViewRepository.findByPeriodIdAndStatus(periodId, "Close");
+		if(!entities.isEmpty()) {
+			Map<String, Object> data = null;
+			for(PayableTourView entity : entities) {
+				data = new HashMap<>();
+				data.put("booking_no", entity.getBookingCode());
+				data.put("reference_name", entity.getReferenceName());
+				data.put("tour_date", DateUtils.toStr(entity.getTourDate(), DateUtils.YYYYMMDD));
+				data.put("tour_name", entity.getTourName());
+				data.put("net_value", entity.getNetValue());
+				
+				response.add(data);
+			}
 		}
 
 		return response;
