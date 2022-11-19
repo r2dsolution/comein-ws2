@@ -46,6 +46,8 @@ public class PayableTourView implements Serializable {
     private long periodId;
     @Column(name="reference_name")
     private String referenceName;
+    @Column(name="tour_id")
+    private Long tourId;
     
     /** Default constructor. */
     public PayableTourView() {
@@ -170,6 +172,16 @@ public class PayableTourView implements Serializable {
 
 	public void setReferenceName(String referenceName) {
 		this.referenceName = referenceName;
+	}
+
+
+	public Long getTourId() {
+		return tourId;
+	}
+
+
+	public void setTourId(Long tourId) {
+		this.tourId = tourId;
 	}
 
 

@@ -66,11 +66,11 @@ public class TourDashboardController {
         return ResponseEntity.ok(res);
 	}
 	
-	@PostMapping("/tour-pay-dashboards/{periodId}/details")
-	public ResponseEntity<List<Map<String, Object>>> searchPayableDashboardDetail(@RequestHeader(ATTR_USER_TOKEN) String userToken, @PathVariable Long periodId) {
+	@PostMapping("/tour-pay-dashboards/{periodId}/{tourId}")
+	public ResponseEntity<List<Map<String, Object>>> searchPayableDashboardDetail(@RequestHeader(ATTR_USER_TOKEN) String userToken, @PathVariable Long periodId, @PathVariable Long tourId) {
 		log.info("Start searchDashboard...periodId : {}", periodId);
 		
-		List<Map<String, Object>> res = this.tourDashboardService.searchPayableDashboardDetail(userToken, periodId);
+		List<Map<String, Object>> res = this.tourDashboardService.searchPayableDashboardDetail(userToken, periodId, tourId);
 		
         return ResponseEntity.ok(res);
 	}

@@ -16,6 +16,6 @@ public interface PayableTourViewRepository extends JpaSpecificationExecutor<Paya
 			+ "where c.periodId = ?1 and c.status = ?2 group by c.periodId, c.tourName, c.note")
 	List<Object[]> sumPayableTourByPeriod(Long periodId, String status);
 	
-	List<PayableTourView> findByPeriodIdAndStatus(Long periodId, String status);
+	List<PayableTourView> findByPeriodIdAndTourIdAndStatus(Long periodId, Long tourId, String status);
 }
 

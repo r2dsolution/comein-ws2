@@ -165,11 +165,11 @@ public class TourDashboardService {
 		return response;
 	}
 	
-	public List<Map<String, Object>> searchPayableDashboardDetail(String userToken, Long periodId){
-		log.info("searchDashboard userToken : {}, periodId : {}", userToken, periodId);
+	public List<Map<String, Object>> searchPayableDashboardDetail(String userToken, Long periodId, Long tourId){
+		log.info("searchDashboard userToken : {}, periodId : {}, tourId : {}", userToken, periodId, tourId);
 		List<Map<String, Object>> response = new ArrayList<>();
 		
-		List<PayableTourView> entities = payableTourViewRepository.findByPeriodIdAndStatus(periodId, "Close");
+		List<PayableTourView> entities = payableTourViewRepository.findByPeriodIdAndTourIdAndStatus(periodId, tourId, "Close");
 		if(!entities.isEmpty()) {
 			Map<String, Object> data = null;
 			for(PayableTourView entity : entities) {
