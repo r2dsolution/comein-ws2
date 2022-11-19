@@ -19,12 +19,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import com.r2dsolution.comein.dao.TourCompanyRepository;
 import com.r2dsolution.comein.dao.TourImageRepository;
 import com.r2dsolution.comein.dao.TourInfoRepository;
 import com.r2dsolution.comein.dao.TourInventoryRepository;
+import com.r2dsolution.comein.dao.TourProvinceRepository;
 import com.r2dsolution.comein.dao.TourTicketRepository;
 import com.r2dsolution.comein.dto.PaggingDto;
 import com.r2dsolution.comein.dto.ResponseListDto;
@@ -35,10 +35,12 @@ import com.r2dsolution.comein.entity.TourCompany;
 import com.r2dsolution.comein.entity.TourImage;
 import com.r2dsolution.comein.entity.TourInfo;
 import com.r2dsolution.comein.entity.TourInventory;
+import com.r2dsolution.comein.entity.TourProvince;
 import com.r2dsolution.comein.entity.TourTicket;
 import com.r2dsolution.comein.exception.ServiceException;
 import com.r2dsolution.comein.spec.TourInfoSpecification;
 import com.r2dsolution.comein.util.Constant;
+import com.r2dsolution.comein.util.ObjectUtils;
 
 @Service
 public class TourInfoService {
@@ -59,6 +61,9 @@ public class TourInfoService {
 	
 	@Autowired
 	private TourTicketRepository tourTicketRepository;
+	
+	@Autowired
+	private TourProvinceRepository tourProvinceRepository;
 	
 	@Value("${aws.s3.public.path}")
 	private String s3PublicPath;
@@ -120,7 +125,7 @@ public class TourInfoService {
 			response.setStartDate(entity.getStartDate());
 			response.setEndDate(entity.getEndDate());
 			response.setCountry(entity.getCountry());
-			response.setProvince(entity.getProvince());
+//			response.setProvince(entity.getProvince());
 			response.setDetail(entity.getDetail());
 			response.setStatus(entity.getStatus());
 			
@@ -148,6 +153,15 @@ public class TourInfoService {
 					imageDtos.add(dto);
 				}
 				response.setImages(imageDtos);
+			}
+			
+			List<TourProvince> provinceEntities = tourProvinceRepository.findByTourIdOrderByProvince(entity.getId());
+			if(!provinceEntities.isEmpty()) {
+				List<String> provinces = new LinkedList<>();
+				for(TourProvince province : provinceEntities) {
+					provinces.add(province.getProvince());
+				}
+				response.setProvinces(provinces);
 			}
 
 		} else {
@@ -186,7 +200,7 @@ public class TourInfoService {
 		entity.setStartDate(req.getStartDate());
 		entity.setEndDate(req.getEndDate());
 		entity.setCountry(req.getCountry());
-		entity.setProvince(req.getProvince());
+//		entity.setProvince(req.getProvince());
 		entity.setDetail(req.getDetail());
 		entity.setStatus(Constant.STATUS_VERIFY);
 		entity.setCreatedDate(currentTimestamp);
@@ -212,6 +226,21 @@ public class TourInfoService {
 			}
 			
 			tourImageRepository.saveAll(imageEntities);
+		}
+		
+		if(req.getProvinces() != null && !req.getProvinces().isEmpty()) {
+			
+			List<TourProvince> provinceEntities = new ArrayList<>();
+			TourProvince provinceEntity = null;
+			for(String province : req.getProvinces()) {
+				provinceEntity = new TourProvince();
+				provinceEntity.setTourId(entity.getId());
+				provinceEntity.setProvince(province);
+
+				provinceEntities.add(provinceEntity);
+			}
+			
+			tourProvinceRepository.saveAll(provinceEntities);
 		}
 		
 		return results;
@@ -248,7 +277,7 @@ public class TourInfoService {
 			entity.setStartDate(req.getStartDate());
 			entity.setEndDate(req.getEndDate());
 			entity.setCountry(req.getCountry());
-			entity.setProvince(req.getProvince());
+//			entity.setProvince(req.getProvince());
 			entity.setDetail(req.getDetail());
 			entity.setUpdatedDate(currentTimestamp);
 			entity.setUpdatedBy(userToken);
@@ -273,6 +302,23 @@ public class TourInfoService {
 				}
 				
 				tourImageRepository.saveAll(imageEntities);
+			}
+			
+			if(req.getProvinces() != null && !req.getProvinces().isEmpty()) {
+				
+				tourProvinceRepository.deleteByTourId(entity.getId());
+				
+				List<TourProvince> provinceEntities = new ArrayList<>();
+				TourProvince provinceEntity = null;
+				for(String province : req.getProvinces()) {
+					provinceEntity = new TourProvince();
+					provinceEntity.setTourId(entity.getId());
+					provinceEntity.setProvince(province);
+
+					provinceEntities.add(provinceEntity);
+				}
+				
+				tourProvinceRepository.saveAll(provinceEntities);
 			}
 		}
 		

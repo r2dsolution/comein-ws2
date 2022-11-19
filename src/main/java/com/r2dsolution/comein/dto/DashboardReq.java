@@ -11,6 +11,9 @@ public class DashboardReq {
     private LocalDate date_from;
     @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     private LocalDate date_to;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
+    private LocalDate tour_date;
+    
 	public long getDashboard_id() {
 		return dashboard_id;
 	}
@@ -34,6 +37,12 @@ public class DashboardReq {
 	}
 	public void setDate_to(LocalDate date_to) {
 		this.date_to = date_to;
+	}
+	public LocalDate getTour_date() {
+		return tour_date;
+	}
+	public void setTour_date(LocalDate tour_date) {
+		this.tour_date = tour_date;
 	}
 
 }

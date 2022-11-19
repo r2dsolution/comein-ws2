@@ -8,13 +8,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 
-import org.springframework.util.ObjectUtils;
-
 public class DateUtils {
 
 	public static final String YYYYMMDD = "yyyy-MM-dd";
 	public static final String YYYYMMDD_HHMM = "yyyy-MM-dd HH:mm";
 	
+	public static String toStr(LocalDate dateTime, String pattern) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
+		return dateTime.format(formatter);
+	}
 	public static String toStr(LocalDateTime dateTime, String pattern) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
 		return dateTime.format(formatter);

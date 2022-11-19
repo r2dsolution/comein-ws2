@@ -14,7 +14,7 @@ public class TourInfoDto {
     private String status;
     
 	private String country;
-	private String province;
+	private List<String> provinces;
     private String detail;
     
     private List<TourImageDto> images;
@@ -85,11 +85,11 @@ public class TourInfoDto {
 	public void setCountry(String country) {
 		this.country = country;
 	}
-	public String getProvince() {
-		return province;
+	public List<String> getProvinces() {
+		return provinces;
 	}
-	public void setProvince(String province) {
-		this.province = province;
+	public void setProvinces(List<String> provinces) {
+		this.provinces = provinces;
 	}
 	
 }
