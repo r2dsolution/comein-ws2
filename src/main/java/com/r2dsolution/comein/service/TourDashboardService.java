@@ -154,9 +154,10 @@ public class TourDashboardService {
 			for(Object[] objs : entities) {
 				data = new HashMap<>();
 				data.put("period_id", objs[0]);
-				data.put("tour_name", objs[1]);
-				data.put("note", objs[2]);
-				data.put("total_net_value", objs[3]);
+				data.put("tour_id", objs[1]);
+				data.put("tour_name", objs[2]);
+				data.put("note", objs[3]);
+				data.put("total_net_value", objs[4]);
 				
 				response.add(data);
 			}

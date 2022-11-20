@@ -1,6 +1,8 @@
 package com.r2dsolution.comein.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.r2dsolution.comein.dao.PayablePeriodRepository;
 import com.r2dsolution.comein.dao.PayableTourViewRepository;
 import com.r2dsolution.comein.dto.PayableCompanyDto;
+import com.r2dsolution.comein.dto.PayableCompanySummaryDto;
 import com.r2dsolution.comein.entity.PayablePeriod;
 import com.r2dsolution.comein.entity.PayableTourView;
 import com.r2dsolution.comein.exception.ServiceException;
@@ -28,16 +31,44 @@ public class PayableCompanyService {
 	@Autowired
 	private PayablePeriodRepository payablePeriodRepository;
 
-	public List<PayableCompanyDto> getPayableTourByCompanyId(Long companyId){
+	public List<PayableCompanySummaryDto> getPayableTourByCompanyId(Long companyId){
 		log.info("getPayableTourByCompanyId companyId : {}", companyId);
-		List<PayableCompanyDto> response = new ArrayList<>();;
+		Map<Long, PayableCompanySummaryDto> map = new LinkedHashMap<>();
+		PayableCompanySummaryDto sumDto = null;
+		List<PayableCompanyDto> details = new ArrayList<>();;
 		
 		List<PayableTourView> entities = payableTourViewRepository.findByCompanyIdAndStatus(companyId, "Open");
 		if(!entities.isEmpty()) {
 			PayableCompanyDto dto = null;
+			Long periodId = null;
+			BigDecimal netValue = BigDecimal.ZERO;
+			BigDecimal total = BigDecimal.ZERO;
 			for(PayableTourView entity : entities) {
-				dto = new PayableCompanyDto();
-			    dto.setPeriodId(entity.getPeriodId());
+				
+				periodId = entity.getPeriodId();
+				netValue = entity.getNetValue();
+				if(map.containsKey(periodId)) {
+					sumDto = map.get(periodId);
+					details = sumDto.getDetails();
+					total = sumDto.getTotal().add(netValue);
+					
+					sumDto.setTotal(total);
+				} else {
+					sumDto = new PayableCompanySummaryDto();
+					dto = new PayableCompanyDto();	
+					details = new ArrayList<>();
+					total = netValue;
+					
+					sumDto.setPeriodId(entity.getPeriodId());
+					sumDto.setPeriodDesc(entity.getPeriodDesc());
+					sumDto.setStatus(entity.getStatus());
+					sumDto.setTotal(total);
+					sumDto.setDetails(details);
+					
+					map.put(periodId, sumDto);
+				}
+				
+			    dto.setPeriodId(periodId);
 				dto.setDateFrom(entity.getDateFrom());
 				dto.setDateTo(entity.getDateTo());
 				dto.setBookingCode(entity.getBookingCode());
@@ -45,15 +76,14 @@ public class PayableCompanyService {
 				dto.setTourDate(entity.getTourDate());
 				dto.setStatus(entity.getStatus());
 				dto.setNetValue(entity.getNetValue());
-//				dto.setTotal(BigDecimal.valueOf(43450));
 				
-			    response.add(dto);
+				details.add(dto);
 			}
 		} else {
 			throw new ServiceException("Data not found.");
 		}
 
-		return response;
+		return new ArrayList<>(map.values());
 	}
 	
 	public void savePayableCompanyById(Long companyId, Map<String, Object> req){

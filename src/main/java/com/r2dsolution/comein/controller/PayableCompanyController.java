@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.r2dsolution.comein.dto.PayableCompanyDto;
+import com.r2dsolution.comein.dto.PayableCompanySummaryDto;
 import com.r2dsolution.comein.service.PayableCompanyService;
 
 @Controller
@@ -30,10 +30,10 @@ public class PayableCompanyController {
 	private PayableCompanyService payableCompanyService;
 	
 	@GetMapping("/payable-companies/{companyId}")
-	public ResponseEntity<List<PayableCompanyDto>> getPayableCompanyById(@PathVariable Long companyId) {
+	public ResponseEntity<List<PayableCompanySummaryDto>> getPayableCompanyById(@PathVariable Long companyId) {
 		log.info("Start getPayableCompanyById.....code : {}", companyId);
 		
-		List<PayableCompanyDto> res = this.payableCompanyService.getPayableTourByCompanyId(companyId);
+		List<PayableCompanySummaryDto> res = this.payableCompanyService.getPayableTourByCompanyId(companyId);
 		
         return ResponseEntity.ok(res);
 	}

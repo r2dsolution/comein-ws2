@@ -221,7 +221,7 @@ public class PayableBookingService {
 				payablePeriod.setDateFrom(dto.getFrom());
 				payablePeriod.setDateTo(dto.getTo());
 				payablePeriod.setPeriodDesc(DateUtils.toStr(dto.getFrom(), "dd/MMM/yyyy") + " - " + DateUtils.toStr(dto.getTo(), "dd/MMM/yyyy"));
-
+				payablePeriod.setStatus("Open");
 				this.payablePeriodRepository.save(payablePeriod);
 			}
 
@@ -246,6 +246,7 @@ public class PayableBookingService {
 					payablePeriodHotel.setDateFrom(dto.getFrom());
 					payablePeriodHotel.setDateTo(dto.getTo());
 					payablePeriodHotel.setPeriodDesc(DateUtils.toStr(dto.getFrom(), "dd/MMM/yyyy") + " - " + DateUtils.toStr(dto.getTo(), "dd/MMM/yyyy"));
+					payablePeriodHotel.setStatus("Open");
 
 					this.payablePeriodRepository.save(payablePeriodHotel);
 				}
