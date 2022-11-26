@@ -130,7 +130,7 @@ public class AWSCognitoService {
 			String firstName = personalDto.getFirstName();
 			String lastName = personalDto.getLastName();
 			String referenceName = personalDto.getReferenceName();
-			String password = "password";
+			String password = "P@ssw0rd";
 			
 
             List<AttributeType> attrs = new ArrayList<>();

@@ -10,6 +10,15 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
+import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
+import com.amazonaws.regions.Regions;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
+import com.amazonaws.services.simpleemail.model.Body;
+import com.amazonaws.services.simpleemail.model.Content;
+import com.amazonaws.services.simpleemail.model.Destination;
+import com.amazonaws.services.simpleemail.model.Message;
+import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.r2dsolution.comein.client.SimpleQueueServiceClient;
 import com.r2dsolution.comein.dto.MailDto;
@@ -48,39 +57,39 @@ public class MailService {
 //	 }
 //	 
 //	
-//	public void sendMail(String from,String to,String subject,String content) {
-//		try {
-//		      AmazonSimpleEmailService client = 
-//		          AmazonSimpleEmailServiceClientBuilder.standard()
-//		          .withCredentials(new ClasspathPropertiesFileCredentialsProvider("aws.properties")) 
-//		          // Replace US_WEST_2 with the AWS Region you're using for
-//		          // Amazon SES.
-//		            .withRegion(Regions.AP_SOUTHEAST_1).build();
-//		      SendEmailRequest request = new SendEmailRequest()
-//		          .withDestination(
-//		              new Destination().withToAddresses(to))
-//		          .withMessage(new Message()
-//		              .withBody(new Body()
-//		                  .withHtml(new Content()
-//		                      .withCharset("UTF-8").withData(content))
-////		                  .withText(new Content()
-////		                      .withCharset("UTF-8").withData(TEXTBODY))
-//		                  )
-//		              .withSubject(new Content()
-//		                  .withCharset("UTF-8").withData(subject)))
-//		          .withSource(from)
-//		          // Comment or remove the next line if you are not using a
-//		          // configuration set
-//		         // .withConfigurationSetName(CONFIGSET);
-//		          ;
-//		      client.sendEmail(request);
-//		      log.info("Email sent!");
-//		    } catch (Exception ex) {
-//		      log.error("The email was not sent. Error message: {}" 
-//		          ,ex.getMessage());
-//		      throw new ServiceException(ex);
-//		    }
-//	}
+	public void sendMail(String from,String to,String subject,String content) {
+		try {
+		      AmazonSimpleEmailService client = 
+		          AmazonSimpleEmailServiceClientBuilder.standard()
+		          .withCredentials(new ClasspathPropertiesFileCredentialsProvider("aws.properties")) 
+		          // Replace US_WEST_2 with the AWS Region you're using for
+		          // Amazon SES.
+		            .withRegion(Regions.AP_SOUTHEAST_1).build();
+		      SendEmailRequest request = new SendEmailRequest()
+		          .withDestination(
+		              new Destination().withToAddresses(to))
+		          .withMessage(new Message()
+		              .withBody(new Body()
+		                  .withHtml(new Content()
+		                      .withCharset("UTF-8").withData(content))
+//		                  .withText(new Content()
+//		                      .withCharset("UTF-8").withData(TEXTBODY))
+		                  )
+		              .withSubject(new Content()
+		                  .withCharset("UTF-8").withData(subject)))
+		          .withSource(from)
+		          // Comment or remove the next line if you are not using a
+		          // configuration set
+		         // .withConfigurationSetName(CONFIGSET);
+		          ;
+		      client.sendEmail(request);
+		      log.info("Email sent!");
+		    } catch (Exception ex) {
+		      log.error("The email was not sent. Error message: {}" 
+		          ,ex.getMessage());
+		      throw new ServiceException(ex);
+		    }
+	}
 	 
 	public void sendMail(EmailRequest req) {
 		try {
@@ -99,12 +108,13 @@ public class MailService {
 	public void sendRegisterInvite(MailDto dto) {
 		log.info(">>>> sendRegisterInvite email : {}", dto.getTo());
 		
-//		String template = generateInviteMailHtml(dto.getRefNo(), dto.getRole());
-//
-//		String subject = "Welcome to ComeIn - Invite";
-//		sendMail(emailOwner, dto.getTo(), subject , template);
-		EmailRequest req = generateInviteMailReq(dto.getTo(), dto.getRefNo(), dto.getRole());
-		sendMail(req);
+		String template = generateInviteMailHtml(dto.getRefNo(), dto.getRole());
+
+		String subject = "Welcome to ComeIn - Invite";
+		sendMail(emailOwner, dto.getTo(), subject , template);
+		
+//		EmailRequest req = generateInviteMailReq(dto.getTo(), dto.getRefNo(), dto.getRole());
+//		sendMail(req);
 		
 	}
 	
@@ -120,25 +130,24 @@ public class MailService {
 
 		log.info(">>>> sendRegisterHotelAdminSuccess email : {}", dto.getTo());
 		
-//		String template = generateSuccessMailHtml(dto.getRole());
-//
-//		String subject = "Welcome to ComeIn - Success";
-//		sendMail(emailOwner, dto.getTo(), subject , template);
+		String template = generateSuccessMailHtml(dto.getRole());
+
+		String subject = "Welcome to ComeIn - Success";
+		sendMail(emailOwner, dto.getTo(), subject , template);
 		
-		EmailRequest req = generateSuccessMailReq(dto.getTo(), dto.getRole());
-		sendMail(req);
+//		EmailRequest req = generateSuccessMailReq(dto.getTo(), dto.getRole());
+//		sendMail(req);
 	}
 	
 	public void sendBookingSuccess(MailDto dto) {
 		log.info(">>>> sendBookingSuccess email : {}", dto.getTo());
 		
-//		String template = generateBookingSuccessMailHtml(dto.getRole(), dto.getName(), dto.getSurname());
-//
-//		String subject = "Welcome to ComeIn - Booking Success";
-//		sendMail(emailOwner, dto.getTo(), subject , template);
+		String template = generateBookingSuccessMailHtml(dto.getRole(), dto.getName(), dto.getSurname());
+
+		String subject = "Welcome to ComeIn - Booking Success";
+		sendMail(emailOwner, dto.getTo(), subject , template);
 		
-		EmailRequest req = generateBookingSuccessMailReq(dto.getTo(), dto.getRole(), dto.getName());
-		sendMail(req);
+//		EmailRequest rs
 		
 	}
 	
