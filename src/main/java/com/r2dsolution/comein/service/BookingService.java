@@ -247,7 +247,7 @@ public class BookingService {
 			entity.setCheckout(req.getCheckout());
 			entity.setVisitorAdult(req.getVisitorAdult());
 			entity.setVisitorChild(req.getVisitorChild());
-			entity.setStatus(Constant.STATUS_INVITED);
+			entity.setStatus(Constant.STATUS_ACTIVE);
 			entity.setCreatedDate(currentTimestamp);
 			entity.setCreatedBy(userToken);
 			entity.setUpdatedDate(currentTimestamp);

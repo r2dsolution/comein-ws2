@@ -15,11 +15,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import com.r2dsolution.comein.util.ObjectUtils;
 
 import com.r2dsolution.comein.dao.BookingRepository;
 import com.r2dsolution.comein.dao.OtaBookingRepository;
-import com.r2dsolution.comein.dto.BookingDto;
 import com.r2dsolution.comein.dto.OtaBookingDto;
 import com.r2dsolution.comein.dto.PaggingDto;
 import com.r2dsolution.comein.dto.ResponseListDto;
@@ -82,9 +80,15 @@ public class OtaBookingService {
 	private OtaBookingDto convertOtaBookingToDto(OtaBooking entity) {
 		OtaBookingDto dto = new OtaBookingDto();
 	    
+		String isCancel = StringUtils.trimToEmpty(entity.getIsCancel());
+		if("f".equals(isCancel)) {
+			isCancel = "No";
+		} else if("t".equals(isCancel)) {
+			isCancel = "Yes";
+		}
 		dto.setId(entity.getId());
 	    dto.setIsBooking(entity.getIsBooking());
-	    dto.setIsCancel(entity.getIsCancel());
+	    dto.setIsCancel(isCancel);
 	    dto.setTemplateLogic(entity.getTemplateLogic());
 	    dto.setFirstName(entity.getFirstName());
 	    dto.setLastName(entity.getLastName());
@@ -167,54 +171,54 @@ public class OtaBookingService {
 		log.info("End manualMatch success.");
 	}
 	
-	public void saveBooking(BookingDto req, String userToken){
-		log.info("Start saveBooking bookingNo : {}", req.getBookingNo());
-		
-		if(req != null) {
-			if(ObjectUtils.isEmpty(req.getBookingNo())){
-				throw new ServiceException("Booking No is require.");
-			}
-		}
-		
-		LocalDateTime currentTimestamp = LocalDateTime.now();
-		
-		try {
-			
-			BookingInfo entity = new BookingInfo();
-			
-			log.info("saveBooking bookingNo : {}", req.getBookingNo());
-			
-			long visitorAdult = req.getVisitorAdult()==null?0:req.getVisitorAdult();
-			LocalDate checkin = req.getCheckin()==null?LocalDate.now():req.getCheckin();
-			LocalDate checkout = req.getCheckout()==null?LocalDate.now():req.getCheckout();
-			String roomName = StringUtils.getValueOrDefault(req.getRoomName(), "-");
-			String roomDesc = StringUtils.getValueOrDefault(req.getRoomDesc(), "-");
-			
-			entity.setBookingNo(req.getBookingNo());
-			entity.setHotelId(req.getHotelId());
-			entity.setBookingDate(req.getBookingDate());
-			entity.setRoomName(roomName);
-			entity.setRoomDesc(roomDesc);
-			entity.setRefName(req.getReferenceName());
-			entity.setCheckin(checkin);
-			entity.setCheckout(checkout);
-			entity.setVisitorAdult(visitorAdult);
-			entity.setVisitorChild(req.getVisitorChild());
-			entity.setStatus(Constant.STATUS_INVITED);
-			entity.setCreatedDate(currentTimestamp);
-			entity.setCreatedBy(userToken);
-			entity.setUpdatedDate(currentTimestamp);
-			entity.setUpdatedBy(userToken);
-			
-			this.bookingRepository.save(entity);
-			
-		}catch(Exception e) {
-			log.error("Exception, ", e);
-			throw new ServiceException(e);
-		}
-		
-		log.info("End saveBooking bookingNo : {}", req.getBookingNo());
-	}
+//	public void saveBooking(BookingDto req, String userToken){
+//		log.info("Start saveBooking bookingNo : {}", req.getBookingNo());
+//		
+//		if(req != null) {
+//			if(ObjectUtils.isEmpty(req.getBookingNo())){
+//				throw new ServiceException("Booking No is require.");
+//			}
+//		}
+//		
+//		LocalDateTime currentTimestamp = LocalDateTime.now();
+//		
+//		try {
+//			
+//			BookingInfo entity = new BookingInfo();
+//			
+//			log.info("saveBooking bookingNo : {}", req.getBookingNo());
+//			
+//			long visitorAdult = req.getVisitorAdult()==null?0:req.getVisitorAdult();
+//			LocalDate checkin = req.getCheckin()==null?LocalDate.now():req.getCheckin();
+//			LocalDate checkout = req.getCheckout()==null?LocalDate.now():req.getCheckout();
+//			String roomName = StringUtils.getValueOrDefault(req.getRoomName(), "-");
+//			String roomDesc = StringUtils.getValueOrDefault(req.getRoomDesc(), "-");
+//			
+//			entity.setBookingNo(req.getBookingNo());
+//			entity.setHotelId(req.getHotelId());
+//			entity.setBookingDate(req.getBookingDate());
+//			entity.setRoomName(roomName);
+//			entity.setRoomDesc(roomDesc);
+//			entity.setRefName(req.getReferenceName());
+//			entity.setCheckin(checkin);
+//			entity.setCheckout(checkout);
+//			entity.setVisitorAdult(visitorAdult);
+//			entity.setVisitorChild(req.getVisitorChild());
+//			entity.setStatus(Constant.STATUS_INVITED);
+//			entity.setCreatedDate(currentTimestamp);
+//			entity.setCreatedBy(userToken);
+//			entity.setUpdatedDate(currentTimestamp);
+//			entity.setUpdatedBy(userToken);
+//			
+//			this.bookingRepository.save(entity);
+//			
+//		}catch(Exception e) {
+//			log.error("Exception, ", e);
+//			throw new ServiceException(e);
+//		}
+//		
+//		log.info("End saveBooking bookingNo : {}", req.getBookingNo());
+//	}
 
 	public void saveOtaBooking(OtaBookingDto req, String userToken){
 		log.info("Start saveOtaBooking hotelName : {}, checin", req.getHotelName());

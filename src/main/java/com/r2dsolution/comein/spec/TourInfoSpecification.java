@@ -30,6 +30,8 @@ public class TourInfoSpecification implements Specification<TourInfo>{
 	public Predicate toPredicate(Root<TourInfo> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
 		Collection<Predicate> predicates = new ArrayList<>();
 		if(this.filter != null) {
+			predicates.add(cb.equal(root.get("companyId"), filter.getCompanyId()));
+			
 			String tourName = this.filter.getTourName();
 			if(tourName != null && !"".equals(tourName)) {
 				tourName = genContainLikePattern(tourName.toUpperCase());

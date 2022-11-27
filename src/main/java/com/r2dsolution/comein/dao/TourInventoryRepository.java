@@ -12,6 +12,6 @@ public interface TourInventoryRepository extends JpaSpecificationExecutor<TourIn
 
 	int countByTourIdAndTourDate(long tourId, LocalDate tourDate);
 	
-	List<TourInventory> findByTourIdAndTourDateGreaterThanEqualAndTourDateLessThanEqualOrderByTourDateAsc(long tourId, LocalDate startDate, LocalDate endDate);
+	List<TourInventory> findByTourIdAndTourDateGreaterThanEqualAndTourDateLessThanEqualAndStatusOrderByTourDateAsc(long tourId, LocalDate startDate, LocalDate endDate, String status);
 }
 

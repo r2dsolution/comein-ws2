@@ -32,11 +32,11 @@ public class TourInfoController {
 	private TourInfoService tourInfoService;
 	
 	@GetMapping("/tours")
-	public ResponseEntity<ResponseListDto<TourInfoDto>> searchTourInfo(@RequestParam(required = false) String email, 
+	public ResponseEntity<ResponseListDto<TourInfoDto>> searchTourInfo(@RequestHeader(ATTR_USER_TOKEN) String userToken, @RequestParam(required = false) String email, 
 			@RequestParam(required = false) String tourName,  Pageable pageable) {
 		log.info("searchTourInfo.....email : {}, tourName : {}", email, tourName);
 		
-		ResponseListDto<TourInfoDto> res = this.tourInfoService.searchTourInfo(email, tourName, pageable);
+		ResponseListDto<TourInfoDto> res = this.tourInfoService.searchTourInfo(userToken, email, tourName, pageable);
 		
         return ResponseEntity.ok(res);
 	}

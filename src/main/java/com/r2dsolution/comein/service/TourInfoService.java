@@ -71,12 +71,19 @@ public class TourInfoService {
 	@Value("${aws.s3.public.path.tour}")
 	private String s3PublicPathTour;
 	
-	public ResponseListDto<TourInfoDto> searchTourInfo(String email, String tourName, Pageable pageable){
+	public ResponseListDto<TourInfoDto> searchTourInfo(String userToken, String email, String tourName, Pageable pageable){
 		System.out.println("searchTourInfo email : "+email+", tourName : "+tourName);
 		ResponseListDto<TourInfoDto> response = new ResponseListDto<>();
 		
+		TourCompany tourCompany = this.tourCompanyRepository.findFirstByOwnerId(userToken);
+		if(tourCompany == null)
+			throw new ServiceException("Data not found.");
+		
+		long companyId = tourCompany.getId();
+		
 		List<TourInfoDto> results = new ArrayList<>();
 		TourInfo filter = new TourInfo();
+		filter.setCompanyId(companyId);
 		filter.setTourName(tourName);
 		TourInfoSpecification spec = new TourInfoSpecification(filter);
 		
@@ -329,7 +336,7 @@ public class TourInfoService {
 		System.out.println("getTourInventoryInfo startDate : "+startDate+", endDate : "+endDate);
 		List<TourInventoryDto> response = new LinkedList<>();
 		
-		List<TourInventory> entities = this.tourInventoryRepository.findByTourIdAndTourDateGreaterThanEqualAndTourDateLessThanEqualOrderByTourDateAsc(tourId, startDate, endDate);
+		List<TourInventory> entities = this.tourInventoryRepository.findByTourIdAndTourDateGreaterThanEqualAndTourDateLessThanEqualAndStatusOrderByTourDateAsc(tourId, startDate, endDate, Constant.STATUS_VERIFY);
 		
 		TourInventoryDto dto = null;
 		for(TourInventory entity : entities) {
@@ -457,52 +464,68 @@ public class TourInfoService {
 	public void updateTourInventory(String userToken, Long tourId, TourInventoryDto req){
 		log.info("Start updateTourInventory tourId : {}, tourDate : {}", tourId, req.getStartDate(), req.getEndDate(), req.getTourDate());
 		
-		if(req != null) {
-			if(ObjectUtils.isEmpty(tourId)) {
-				throw new ServiceException("Tour ID is require.");	
-			}
-			if(ObjectUtils.isEmpty(req.getId())) {
-				throw new ServiceException("Tour Inventory ID is require.");	
-			}			
-			if(ObjectUtils.isEmpty(req.getTourDate())) {
-				throw new ServiceException("Tour Date is require.");	
-			}
-			if(req.getTotal() == 0) {
-				throw new ServiceException("Total Inventory is require.");	
-			}
-			if(ObjectUtils.isEmpty(req.getAdultRate())) {
-				throw new ServiceException("Adult Rate is require.");	
-			}
-			if(ObjectUtils.isEmpty(req.getChildRate())) {
-				throw new ServiceException("Child Rate is require.");	
-			}
-			if(!ObjectUtils.isEmpty(req.getCancelable()) && "Y".equals(req.getCancelable()) && req.getCancelBefore() == 0) {
-				throw new ServiceException("Day Cancel Before is require.");	
-			}
+		long inventoryId = 0L;
+		boolean isCancelTicket = false;
+		if(req != null && req.getTotal() == 0) {
+			isCancelTicket = true;
+			inventoryId = req.getId();
 		}
 		
-		long inventoryId = req.getId();
-		Optional<TourInventory> entityOpt = this.tourInventoryRepository.findById(inventoryId);
-		if(entityOpt.isPresent()) {
-			LocalDateTime currentTimestamp = LocalDateTime.now();
-			
-			TourInventory entity = entityOpt.get();
-			entity.setTotal(req.getTotal());
-			entity.setAdultRate(req.getAdultRate());
-			entity.setChildRate(req.getChildRate());
-			entity.setCancelable(req.getCancelable());
-			entity.setCancelBefore(req.getCancelBefore());
-			entity.setUpdatedBy(userToken);
-			entity.setUpdatedDate(currentTimestamp);
-			
-			this.tourInventoryRepository.save(entity);
-			
-			//re-generate tour ticket
+		if(isCancelTicket) {
+			Optional<TourInventory> opt = this.tourInventoryRepository.findById(inventoryId);
+			if(opt.isPresent()) {
+				LocalDateTime currentTimestamp = LocalDateTime.now();
+				
+				TourInventory tourInventory = opt.get();
+				tourInventory.setStatus(Constant.STATUS_CANCEL);
+				tourInventory.setUpdatedBy(userToken);
+				tourInventory.setUpdatedDate(currentTimestamp);
+				this.tourInventoryRepository.save(tourInventory);
+			}
 			this.tourTicketRepository.disableTicketByInventory(Constant.STATUS_TICKET_INACTIVE, inventoryId);
-			
-			generateTourTicket(inventoryId, req.getTourDate(), userToken, req);
-			
-		}
+		} else {
+			if(req != null) {
+				if(ObjectUtils.isEmpty(tourId)) {
+					throw new ServiceException("Tour ID is require.");	
+				}
+				if(ObjectUtils.isEmpty(req.getId())) {
+					throw new ServiceException("Tour Inventory ID is require.");	
+				}			
+				if(ObjectUtils.isEmpty(req.getTourDate())) {
+					throw new ServiceException("Tour Date is require.");	
+				}
+				if(ObjectUtils.isEmpty(req.getAdultRate())) {
+					throw new ServiceException("Adult Rate is require.");	
+				}
+				if(ObjectUtils.isEmpty(req.getChildRate())) {
+					throw new ServiceException("Child Rate is require.");	
+				}
+				if(!ObjectUtils.isEmpty(req.getCancelable()) && "Y".equals(req.getCancelable()) && req.getCancelBefore() == 0) {
+					throw new ServiceException("Day Cancel Before is require.");	
+				}
+			}
 		
+			Optional<TourInventory> entityOpt = this.tourInventoryRepository.findById(inventoryId);
+			if(entityOpt.isPresent()) {
+				LocalDateTime currentTimestamp = LocalDateTime.now();
+				
+				TourInventory entity = entityOpt.get();
+				entity.setTotal(req.getTotal());
+				entity.setAdultRate(req.getAdultRate());
+				entity.setChildRate(req.getChildRate());
+				entity.setCancelable(req.getCancelable());
+				entity.setCancelBefore(req.getCancelBefore());
+				entity.setUpdatedBy(userToken);
+				entity.setUpdatedDate(currentTimestamp);
+				
+				this.tourInventoryRepository.save(entity);
+				
+				//re-generate tour ticket
+				this.tourTicketRepository.disableTicketByInventory(Constant.STATUS_TICKET_INACTIVE, inventoryId);
+				
+				generateTourTicket(inventoryId, req.getTourDate(), userToken, req);
+				
+			}
+		}
 	}
 }
