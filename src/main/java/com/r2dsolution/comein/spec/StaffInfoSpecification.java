@@ -41,7 +41,7 @@ public class StaffInfoSpecification implements Specification<StaffInfo>{
 			}
 			if(refName != null && !"".equals(refName)) {
 				refName = genContainLikePattern(refName.toUpperCase());
-				predicates.add(cb.like(cb.upper(root.get("staffName")), refName));
+				predicates.add(cb.like(cb.upper(root.get("refName")), refName));
 			}
 		}
 		return cb.and(predicates.toArray(new Predicate[predicates.size()]));

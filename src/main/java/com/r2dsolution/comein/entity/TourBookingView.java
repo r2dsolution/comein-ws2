@@ -44,8 +44,12 @@ public class TourBookingView implements Serializable {
     private Integer totalAdult;
     @Column(name="total_child")
     private Integer totalChild;
-    @Column(name="total_rate")
-    private BigDecimal totalRate;
+    @Column(name="ticket_sell_value")
+    private BigDecimal ticketSellValue;
+    @Column(name="hotel_sell_value")
+    private BigDecimal hotelSellValue;
+    @Column(name="net_value")
+    private BigDecimal netValue;
     @Column(name="payment_method", nullable=false)
     private String paymentMethod;
     private String remark;
@@ -330,14 +334,6 @@ public class TourBookingView implements Serializable {
 		this.totalChild = totalChild;
 	}
 
-	public BigDecimal getTotalRate() {
-		return totalRate;
-	}
-
-	public void setTotalRate(BigDecimal totalRate) {
-		this.totalRate = totalRate;
-	}
-
 	public String getCancelable() {
 		return cancelable;
 	}
@@ -368,6 +364,30 @@ public class TourBookingView implements Serializable {
 
 	public void setTourId(long tourId) {
 		this.tourId = tourId;
+	}
+
+	public BigDecimal getTicketSellValue() {
+		return ticketSellValue;
+	}
+
+	public void setTicketSellValue(BigDecimal ticketSellValue) {
+		this.ticketSellValue = ticketSellValue;
+	}
+
+	public BigDecimal getHotelSellValue() {
+		return hotelSellValue;
+	}
+
+	public void setHotelSellValue(BigDecimal hotelSellValue) {
+		this.hotelSellValue = hotelSellValue;
+	}
+
+	public BigDecimal getNetValue() {
+		return netValue;
+	}
+
+	public void setNetValue(BigDecimal netValue) {
+		this.netValue = netValue;
 	}
 
 }

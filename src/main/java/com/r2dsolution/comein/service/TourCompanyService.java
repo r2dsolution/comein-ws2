@@ -173,6 +173,11 @@ public class TourCompanyService {
 			throw new ServiceException("Email is duplicate.");
 		}
 		
+		int cntHotel = tourCompanyRepository.countByCompanyNameContainingIgnoreCase(req.getCompanyName());
+		if(cntHotel > 0) {
+			throw new ServiceException("Company Name is duplicate.");
+		}
+		
 		personalReq = new PersonalDto();
 		personalReq.setFirstName(req.getFirstName());
 		personalReq.setLastName(req.getLastName());

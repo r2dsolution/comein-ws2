@@ -35,11 +35,11 @@ public class HotelStaffController {
 	@GetMapping("/hotel-staffs")
 	public ResponseEntity<ResponseListDto<StaffDto>> searchHotelStaffInfo(@RequestHeader(ATTR_USER_TOKEN) String userToken, 
 			@RequestParam(required = false) String email, 
-			@RequestParam(required = false) String staffName,  Pageable pageable) {
+			@RequestParam(required = false) String referenceName,  Pageable pageable) {
 
-		log.info("searchHotelStaffInfo.....email : {}, staffName : {}", email, staffName);
+		log.info("searchHotelStaffInfo.....email : {}, referenceName : {}", email, referenceName);
 		
-		ResponseListDto<StaffDto> res = this.staffInfoService.searchStaffInfo(userToken, email, staffName, pageable);
+		ResponseListDto<StaffDto> res = this.staffInfoService.searchStaffInfo(userToken, email, referenceName, pageable);
 		
         return ResponseEntity.ok(res);
 	}

@@ -83,6 +83,13 @@ public class StaffInfoService {
 			List<PersonalDto> persons = this.cognitoService.get(AWSCognitoService.GET_USER, personalReq);
 			if(!persons.isEmpty()) {
 				personalRes = persons.get(0);
+			} else {
+//				throw new ServiceException("Data not found.");
+				response.setDatas(results);
+				
+				PaggingDto pagging = new PaggingDto(0, 10, 0);
+				response.setPagging(pagging);
+				return response;
 			}
 		}
 		

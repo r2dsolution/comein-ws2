@@ -1,5 +1,6 @@
 package com.r2dsolution.comein.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,10 +15,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import com.r2dsolution.comein.util.ObjectUtils;
 
 import com.r2dsolution.comein.cognito.AWSCognitoService;
 import com.r2dsolution.comein.dao.TourBookingRepository;
+import com.r2dsolution.comein.dao.TourBookingTicketRepository;
 import com.r2dsolution.comein.dao.TourBookingViewRepository;
 import com.r2dsolution.comein.dao.TourTicketRepository;
 import com.r2dsolution.comein.dto.PaggingDto;
@@ -25,10 +26,13 @@ import com.r2dsolution.comein.dto.PersonalDto;
 import com.r2dsolution.comein.dto.ResponseListDto;
 import com.r2dsolution.comein.dto.TourBookingDto;
 import com.r2dsolution.comein.entity.TourBooking;
+import com.r2dsolution.comein.entity.TourBookingTicket;
 import com.r2dsolution.comein.entity.TourBookingView;
+import com.r2dsolution.comein.entity.TourTicket;
 import com.r2dsolution.comein.exception.ServiceException;
 import com.r2dsolution.comein.spec.TourBookingViewSpecification;
 import com.r2dsolution.comein.util.Constant;
+import com.r2dsolution.comein.util.ObjectUtils;
 import com.r2dsolution.comein.util.StringUtils;
 
 @Service
@@ -48,6 +52,9 @@ public class TourBookingService {
 	@Autowired
 	private AWSCognitoService cognitoService;
 	
+	@Autowired
+	private TourBookingTicketRepository tourBookingTicketRepository;
+
 	public ResponseListDto<TourBookingDto> searchTourBooking(String dateType, LocalDate startDate, LocalDate endDate, String bookingCode, String referenceName, Pageable pageable){
 		log.info("searchTourBooking dateType : {}, startDate : {}, endDate : {}, bookingCode : {}, referenceName : {}", dateType, startDate, endDate, bookingCode, referenceName);
 		ResponseListDto<TourBookingDto> response = new ResponseListDto<>();
@@ -72,7 +79,7 @@ public class TourBookingService {
 			dto.setBookingDate(entity.getBookingDate());
 			dto.setTotalAdult(entity.getTotalAdult());
 			dto.setTotalChild(entity.getTotalChild());
-			dto.setTotalRate(entity.getTotalRate());
+			dto.setTotalRate(entity.getTicketSellValue());
 			dto.setRemark(entity.getRemark());
 			dto.setPaymentMethod(entity.getPaymentMethod());
 			dto.setTourName(entity.getTourName());
@@ -105,7 +112,7 @@ public class TourBookingService {
 			response.setBookingDate(entity.getBookingDate());
 			response.setTotalAdult(entity.getTotalAdult());
 			response.setTotalChild(entity.getTotalChild());
-			response.setTotalRate(entity.getTotalRate());
+			response.setTotalRate(entity.getTicketSellValue());
 			response.setRemark(entity.getRemark());
 			response.setPaymentMethod(entity.getPaymentMethod());
 			response.setTourName(entity.getTourName());
@@ -155,26 +162,22 @@ public class TourBookingService {
 			throw new ServiceException("Booking Code is require.");	
 		}
 		
-		int cntBooking = this.tourBookingRepository.countByBookingCodeAndStatus(bookingCode, Constant.STATUS_BOOKING_BOOKED);
-		log.info("cntBooking : {}", cntBooking);
-		if(cntBooking > 0) {
-			LocalDateTime currentTimestamp = LocalDateTime.now();
-			List<Long> tickets = new ArrayList<>();
-			List<TourBooking> bookings = this.tourBookingRepository.findByBookingCodeAndStatus(bookingCode, Constant.STATUS_BOOKING_BOOKED);
-			for(TourBooking booking : bookings) {
-				booking.setStatus(Constant.STATUS_BOOKING_CANCEL);
-				booking.setUpdatedBy(userToken);
-				booking.setUpdatedDate(currentTimestamp);
-				
-				tickets.add(booking.getTicketId());
-			}
-			this.tourBookingRepository.saveAll(bookings);
-			
+		LocalDateTime currentTimestamp = LocalDateTime.now();
+		TourBooking booking = this.tourBookingRepository.findFirstByBookingCodeAndStatus(bookingCode, Constant.STATUS_BOOKING_BOOKED);
+		if(booking != null) {
+			booking.setStatus(Constant.STATUS_BOOKING_CANCEL);
+			booking.setUpdatedBy(userToken);
+			booking.setUpdatedDate(currentTimestamp);
+
+			this.tourBookingRepository.save(booking);
+
+			List<Long> tickets = this.tourBookingTicketRepository.findTicketIdByBookingId(booking.getId());
+
+			this.tourTicketRepository.updateByTicketIdIn(Constant.STATUS_TICKET_CANCEL, tickets);
+		}
 //			int cntCancel = this.tourBookingRepository.cancelTourBooking(Constant.STATUS_CANCEL, userToken, bookingCode, Constant.STATUS_ENABLE);
 //			log.info("cancelTourBooking bookingCode : {}, cnt : {} success.", bookingCode, cntCancel);
 			
-			this.tourTicketRepository.updateByTicketIdIn(Constant.STATUS_TICKET_CANCEL, tickets);
-		}
 		log.info("End cancelTourBooking bookingCode : {}", bookingCode);
 	}
 
@@ -198,4 +201,79 @@ public class TourBookingService {
 		log.info("End changeTourBooking bookingCode : {}", bookingCode);
 	}
 
+	public void saveTourBooking(TourBookingDto req, String userToken){
+		log.info("Start saveTourBooking bookingCode : {}, tourDate : {}", req.getBookingCode(), req.getTourData());
+
+		LocalDateTime currentTimestamp = LocalDateTime.now();
+		
+		long tourId = req.getTourData().getId();
+		int totalAdult = req.getTotalAdult();
+		int totalChild = req.getTotalChild();
+		
+		//TODO Mock Test
+//		List<TourTicket> tourTickets = this.tourTicketRepository.findByTourIdAndStatus(tourId, Constant.STATUS_TICKET_ACTIVE);
+//		List<TourBookingTicket> tourBookingTickets = new ArrayList<>();
+//		
+//		BigDecimal ticketSellValue = BigDecimal.ZERO;
+//		BigDecimal hotelSellValue = BigDecimal.ZERO;
+//		BigDecimal netValue = BigDecimal.ZERO;
+//		BigDecimal sellValue = BigDecimal.ZERO;
+//		int cntAdult = totalAdult;
+//		int cntChild = totalChild;
+//		TourBookingTicket tourBookingTicket = null;
+//		for(TourTicket tourTicket : tourTickets) {
+//			tourBookingTicket = new TourBookingTicket();
+//			tourBookingTicket.setTicketId(tourTicket.getId());
+//			
+//			if(cntAdult > 0) {
+//				sellValue = tourTicket.getAdultRate();
+//				tourBookingTicket.setBookingType("Adult");
+//				tourBookingTicket.setSellValue(sellValue);
+//				cntAdult--;
+//			} else if(cntChild > 0) {
+//				sellValue = tourTicket.getChildRate();
+//				tourBookingTicket.setBookingType("Child");
+//				tourBookingTicket.setSellValue(sellValue);
+//				cntChild--;
+//			}
+//			ticketSellValue.add(sellValue);
+//			
+//			tourBookingTickets.add(tourBookingTicket);
+//		}
+//		
+//		TourBooking tourBooking = new TourBooking();
+//		tourBooking.setBookingCode(req.getBookingCode());
+//	    tourBooking.setOwnerId("XXXXX");
+//	    tourBooking.setReferenceName(req.getReferenceName());
+//	    tourBooking.setLocationPickup(req.getLocationPickup());
+//	    tourBooking.setBookingDate(req.getBookingDate());
+//	    tourBooking.setPaymentMethod(req.getPaymentMethod());
+//	    tourBooking.setRemark(req.getRemark());
+//	    tourBooking.setStatus(Constant.STATUS_BOOKING_BOOKED);
+//	    tourBooking.setCreatedDate(currentTimestamp);
+//	    tourBooking.setCreatedBy(userToken);
+//	    tourBooking.setUpdatedDate(currentTimestamp);
+//	    tourBooking.setUpdatedBy(userToken);
+//	    tourBooking.setTourName(req.getTourName());
+//	    tourBooking.setTourDate(req.getTourDate());
+//	    tourBooking.setTicketSellValue(ticketSellValue);
+//	    tourBooking.setHotelSellValue(hotelSellValue);
+//	    tourBooking.setNetValue(netValue);
+//	    tourBooking.setCompanyId(req.getCompanyId());
+//	    tourBooking.setTourId(req.getTourData().getId());
+//	    
+//	    tourBooking = this.tourBookingRepository.save(tourBooking);
+//	    long bookingId = tourBooking.getId();
+//	    for(TourBookingTicket bookingTicket : tourBookingTickets) {
+//	    	bookingTicket.setBookingId(bookingId);
+//	    	bookingTicket.setCreatedDate(currentTimestamp);
+//	    	bookingTicket.setCreatedBy(userToken);
+//	    	bookingTicket.setUpdatedDate(currentTimestamp);
+//	    	bookingTicket.setUpdatedBy(userToken);
+//	    }
+//	    this.tourBookingTicketRepository.saveAll(tourBookingTickets);
+	    
+		log.info("End saveTourBooking bookingCode : {}", req.getBookingCode());
+	}
+	
 }

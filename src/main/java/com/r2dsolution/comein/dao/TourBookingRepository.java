@@ -1,7 +1,6 @@
 package com.r2dsolution.comein.dao;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.transaction.Transactional;
 
@@ -16,7 +15,7 @@ public interface TourBookingRepository extends JpaSpecificationExecutor<TourBook
 	
 	int countByBookingCodeAndStatus(String bookingCode, String status);
 
-	List<TourBooking> findByBookingCodeAndStatus(String bookingCode, String status);
+	TourBooking findFirstByBookingCodeAndStatus(String bookingCode, String status);
 
 	@Transactional
 	@Modifying

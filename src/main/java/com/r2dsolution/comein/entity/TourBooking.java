@@ -32,8 +32,6 @@ public class TourBooking implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(unique=true, nullable=false, precision=19)
     private long id;
-    @Column(name="ticket_id", nullable=false, precision=19)
-    private long ticketId;
     @Column(name="booking_code", nullable=false)
     private String bookingCode;
     @Column(name="owner_id", nullable=false)
@@ -44,8 +42,6 @@ public class TourBooking implements Serializable {
     private String locationPickup;
     @Column(name="booking_date", nullable=false)
     private LocalDate bookingDate;
-    @Column(name="booking_type")
-    private String bookingType;
     @Column(name="payment_method", nullable=false)
     private String paymentMethod;
     private String remark;
@@ -62,8 +58,12 @@ public class TourBooking implements Serializable {
     private String tourName;
     @Column(name="tour_date", nullable=false)
     private LocalDate tourDate;
-    @Column(name="sell_value")
-    private BigDecimal sellValue;
+    @Column(name="ticket_sell_value")
+    private BigDecimal ticketSellValue;
+    @Column(name="hotel_sell_value")
+    private BigDecimal hotelSellValue;
+    @Column(name="net_value")
+    private BigDecimal netValue;
     @Column(name="company_id")
     private long companyId;
     @Column(name="tour_id")
@@ -394,30 +394,6 @@ public class TourBooking implements Serializable {
 		this.tourDate = tourDate;
 	}
 
-	public String getBookingType() {
-		return bookingType;
-	}
-
-	public void setBookingType(String bookingType) {
-		this.bookingType = bookingType;
-	}
-
-	public long getTicketId() {
-		return ticketId;
-	}
-
-	public void setTicketId(long ticketId) {
-		this.ticketId = ticketId;
-	}
-
-	public BigDecimal getSellValue() {
-		return sellValue;
-	}
-
-	public void setSellValue(BigDecimal sellValue) {
-		this.sellValue = sellValue;
-	}
-
 	public long getCompanyId() {
 		return companyId;
 	}
@@ -432,6 +408,30 @@ public class TourBooking implements Serializable {
 
 	public void setTourId(long tourId) {
 		this.tourId = tourId;
+	}
+
+	public BigDecimal getTicketSellValue() {
+		return ticketSellValue;
+	}
+
+	public void setTicketSellValue(BigDecimal ticketSellValue) {
+		this.ticketSellValue = ticketSellValue;
+	}
+
+	public BigDecimal getHotelSellValue() {
+		return hotelSellValue;
+	}
+
+	public void setHotelSellValue(BigDecimal hotelSellValue) {
+		this.hotelSellValue = hotelSellValue;
+	}
+
+	public BigDecimal getNetValue() {
+		return netValue;
+	}
+
+	public void setNetValue(BigDecimal netValue) {
+		this.netValue = netValue;
 	}
 
 }

@@ -170,6 +170,11 @@ public class HotelInfoService {
 			throw new ServiceException("Email is duplicate.");
 		}
 		
+		int cntHotel = hotelInfoRepository.countByHotelNameContainingIgnoreCase(req.getHotelName());
+		if(cntHotel > 0) {
+			throw new ServiceException("Hotel Name is duplicate.");
+		}
+		
 		personalReq = new PersonalDto();
 		personalReq.setFirstName(req.getFirstName());
 		personalReq.setLastName(req.getLastName());

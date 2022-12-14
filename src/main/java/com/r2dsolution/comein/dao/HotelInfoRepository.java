@@ -29,5 +29,7 @@ public interface HotelInfoRepository extends JpaSpecificationExecutor<HotelInfo>
 	@Modifying
 	@Query("delete HotelInfo x where x.ownerId = ?1 ")
 	int deleteByOwnerId(String ownerId);
+	
+	int countByHotelNameContainingIgnoreCase(String hotelName);
 }
 

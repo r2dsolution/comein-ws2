@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -71,6 +72,15 @@ public class TourBookingController {
 		log.info("changeTourBooking.....bookingCode : {}", req.getBookingCode());
 			
 		this.tourBookingService.changeTourBooking(req, userToken);
+		
+        return new ResponseEntity<Void>(HttpStatus.OK);
+	}	
+	
+	@PostMapping("/tour-bookings")
+	public ResponseEntity<Void> saveTourBooking(@RequestHeader(ATTR_USER_TOKEN) String userToken, @RequestBody TourBookingDto req) {
+		log.info("saveTourBooking.....bookingCode : {}", req.getBookingCode());
+			
+		this.tourBookingService.saveTourBooking(req, userToken);
 		
         return new ResponseEntity<Void>(HttpStatus.OK);
 	}	

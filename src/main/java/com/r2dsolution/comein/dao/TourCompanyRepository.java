@@ -24,5 +24,7 @@ public interface TourCompanyRepository extends JpaSpecificationExecutor<TourComp
 	@Modifying
 	@Query("delete TourCompany x where x.ownerId = ?1 ")
 	int deleteByOwnerId(String ownerId);
+	
+	int countByCompanyNameContainingIgnoreCase(String companyName);
 }
 

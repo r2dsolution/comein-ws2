@@ -32,6 +32,7 @@ public class Constant {
 
 	public static final String STATUS_TICKET_ACTIVE = "Active";
 	public static final String STATUS_TICKET_INACTIVE = "InActive";
+	public static final String STATUS_TICKET_BOOKED = "Booked";
 	public static final String STATUS_TICKET_CANCEL = "Cancel";
 	
 	public static final String STATUS_OTA_AUTO_MATCH = "AutoMatch";
