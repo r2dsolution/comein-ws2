@@ -80,14 +80,16 @@ public class OtaBookingService {
 	private OtaBookingDto convertOtaBookingToDto(OtaBooking entity) {
 		OtaBookingDto dto = new OtaBookingDto();
 	    
-		String isCancel = StringUtils.trimToEmpty(entity.getIsCancel());
-		if("f".equals(isCancel)) {
-			isCancel = "No";
-		} else if("t".equals(isCancel)) {
+		String isCancel = "No";
+		if(entity.getIsCancel()) {
 			isCancel = "Yes";
 		}
+		String isBooking = "No";
+		if(entity.getIsBooking()) {
+			isBooking = "Yes";
+		}
 		dto.setId(entity.getId());
-	    dto.setIsBooking(entity.getIsBooking());
+	    dto.setIsBooking(isBooking);
 	    dto.setIsCancel(isCancel);
 	    dto.setTemplateLogic(entity.getTemplateLogic());
 	    dto.setFirstName(entity.getFirstName());
@@ -228,8 +230,17 @@ public class OtaBookingService {
 		
 		OtaBooking entity = new OtaBooking();
 			
-	    entity.setIsBooking(req.getIsBooking());
-	    entity.setIsCancel(req.getIsCancel());
+		boolean isCancel = false;
+		if("Y".equals(StringUtils.trimToEmpty(req.getIsCancel()))) {
+			isCancel = true;
+		}
+		boolean isBooking = false;
+		if("Y".equals(StringUtils.trimToEmpty(req.getIsBooking()))) {
+			isBooking = true;
+		}
+
+	    entity.setIsBooking(isBooking);
+	    entity.setIsCancel(isCancel);
 	    entity.setTemplateLogic(req.getTemplateLogic());
 	    entity.setFirstName(req.getFirstName());
 	    entity.setLastName(req.getLastName());

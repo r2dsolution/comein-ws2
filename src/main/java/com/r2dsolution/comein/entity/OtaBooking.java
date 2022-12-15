@@ -33,9 +33,9 @@ public class OtaBooking implements Serializable {
     @Column(unique=true, nullable=false, precision=19)
     private long id;
     @Column(name="is_booking", nullable=false)
-    private String isBooking;
+    private boolean isBooking;
     @Column(name="is_cancel", nullable=false)
-    private String isCancel;
+    private boolean isCancel;
     @Column(name="template_logic", nullable=false, precision=19)
     private long templateLogic;
     @Column(name="first_name", length=100)
@@ -103,7 +103,7 @@ public class OtaBooking implements Serializable {
      *
      * @return true if and only if isBooking is currently true
      */
-    public String getIsBooking() {
+    public boolean getIsBooking() {
         return isBooking;
     }
 
@@ -112,7 +112,7 @@ public class OtaBooking implements Serializable {
      *
      * @param aIsBooking the new value for isBooking
      */
-    public void setIsBooking(String aIsBooking) {
+    public void setIsBooking(boolean aIsBooking) {
         isBooking = aIsBooking;
     }
 
@@ -121,7 +121,7 @@ public class OtaBooking implements Serializable {
      *
      * @return true if and only if isCancel is currently true
      */
-    public String getIsCancel() {
+    public boolean getIsCancel() {
         return isCancel;
     }
 
@@ -130,7 +130,7 @@ public class OtaBooking implements Serializable {
      *
      * @param aIsCancel the new value for isCancel
      */
-    public void setIsCancel(String aIsCancel) {
+    public void setIsCancel(boolean aIsCancel) {
         isCancel = aIsCancel;
     }
 
