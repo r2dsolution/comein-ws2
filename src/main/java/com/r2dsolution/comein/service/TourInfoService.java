@@ -464,11 +464,10 @@ public class TourInfoService {
 	public void updateTourInventory(String userToken, Long tourId, TourInventoryDto req){
 		log.info("Start updateTourInventory tourId : {}, tourDate : {}", tourId, req.getStartDate(), req.getEndDate(), req.getTourDate());
 		
-		long inventoryId = 0L;
+		long inventoryId = req.getId();
 		boolean isCancelTicket = false;
 		if(req != null && req.getTotal() == 0) {
 			isCancelTicket = true;
-			inventoryId = req.getId();
 		}
 		
 		if(isCancelTicket) {
