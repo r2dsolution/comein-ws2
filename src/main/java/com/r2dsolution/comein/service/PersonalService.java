@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.r2dsolution.comein.util.ObjectUtils;
 
 import com.r2dsolution.comein.cognito.AWSCognitoService;
 import com.r2dsolution.comein.dao.BookingKycRepository;
@@ -21,6 +20,7 @@ import com.r2dsolution.comein.entity.PdpaInviteToken;
 import com.r2dsolution.comein.entity.UserInfo;
 import com.r2dsolution.comein.exception.ServiceException;
 import com.r2dsolution.comein.util.Constant;
+import com.r2dsolution.comein.util.ObjectUtils;
 import com.r2dsolution.comein.util.StringUtils;
 
 
@@ -43,6 +43,7 @@ public class PersonalService {
 	
 	@Autowired
 	private BookingKycRepository bookingKycRepository;
+	
 	public PersonalDto getPersonalInfo(String ownerId){
 		log.info("getPersonalInfo ownerId : {}", ownerId);;
 		PersonalDto response = null;
@@ -92,6 +93,36 @@ public class PersonalService {
 		}
 
 		return response;
+	}
+	
+	public void updatePersonalInfo(PersonalDto req, String userToken){
+		log.info("Start updatePersonalInfo... ");
+		
+		if(req != null) {
+			if(ObjectUtils.isEmpty(req.getFirstName())) {
+				throw new ServiceException("First Name is require.");	
+			}
+			if(ObjectUtils.isEmpty(req.getLastName())) {
+				throw new ServiceException("Last Name is require.");	
+			}
+		}
+		
+		//update cognito
+		PersonalDto personalRes = null;
+		PersonalDto personalReq = new PersonalDto();
+		personalReq.setOwnerId(userToken);
+		List<PersonalDto> persons = this.cognitoService.get(AWSCognitoService.GET_USER, personalReq);
+		if(!persons.isEmpty()) {
+			personalRes = persons.get(0);
+			personalReq.setOwnerId(personalRes.getOwnerId());
+			personalReq.setFirstName(req.getFirstName());
+			personalReq.setLastName(req.getLastName());
+			if(StringUtils.isEmpty(req.getReferenceName()))
+				personalReq.setReferenceName(StringUtils.trimToEmpty(req.getFirstName()) + " " + StringUtils.trimToEmpty(req.getLastName()));
+			else
+				personalReq.setReferenceName(req.getReferenceName());
+			this.cognitoService.post(AWSCognitoService.POST_UPDATE_USER, personalReq);
+		}
 	}
 	
 	public PersonalDto getPersonalConsent(PersonalConsentDto req){
