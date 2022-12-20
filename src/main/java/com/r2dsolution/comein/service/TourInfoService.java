@@ -20,6 +20,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.r2dsolution.comein.dao.TicketViewRepository;
 import com.r2dsolution.comein.dao.TourCompanyRepository;
 import com.r2dsolution.comein.dao.TourImageRepository;
 import com.r2dsolution.comein.dao.TourInfoRepository;
@@ -37,6 +38,7 @@ import com.r2dsolution.comein.entity.TourInfo;
 import com.r2dsolution.comein.entity.TourInventory;
 import com.r2dsolution.comein.entity.TourProvince;
 import com.r2dsolution.comein.entity.TourTicket;
+import com.r2dsolution.comein.entity.VTicket;
 import com.r2dsolution.comein.exception.ServiceException;
 import com.r2dsolution.comein.spec.TourInfoSpecification;
 import com.r2dsolution.comein.util.Constant;
@@ -64,6 +66,9 @@ public class TourInfoService {
 	
 	@Autowired
 	private TourProvinceRepository tourProvinceRepository;
+	
+	@Autowired
+	private TicketViewRepository ticketViewRepository;
 	
 	@Value("${aws.s3.public.path}")
 	private String s3PublicPath;
@@ -209,7 +214,7 @@ public class TourInfoService {
 		entity.setCountry(req.getCountry());
 //		entity.setProvince(req.getProvince());
 		entity.setDetail(req.getDetail());
-		entity.setStatus(Constant.STATUS_VERIFY);
+		entity.setStatus(Constant.STATUS_ACTIVE);
 		entity.setCreatedDate(currentTimestamp);
 		entity.setCreatedBy(userToken);
 		entity.setUpdatedDate(currentTimestamp);
@@ -227,7 +232,7 @@ public class TourInfoService {
 				imageEntity.setImgType(Constant.IMG_TYPE_COVER);
 				imageEntity.setSeq(image.getSeq());
 				imageEntity.setTourImg(image.getTourImg());
-				imageEntity.setStatus(Constant.STATUS_VERIFY);
+				imageEntity.setStatus(Constant.STATUS_ACTIVE);
 				
 				imageEntities.add(imageEntity);
 			}
@@ -303,7 +308,7 @@ public class TourInfoService {
 					imageEntity.setImgType("Cover");
 					imageEntity.setSeq(image.getSeq());
 					imageEntity.setTourImg(image.getTourImg());
-					imageEntity.setStatus(Constant.STATUS_VERIFY);
+					imageEntity.setStatus(Constant.STATUS_ACTIVE);
 					
 					imageEntities.add(imageEntity);
 				}
@@ -336,20 +341,20 @@ public class TourInfoService {
 		System.out.println("getTourInventoryInfo startDate : "+startDate+", endDate : "+endDate);
 		List<TourInventoryDto> response = new LinkedList<>();
 		
-		List<TourInventory> entities = this.tourInventoryRepository.findByTourIdAndTourDateGreaterThanEqualAndTourDateLessThanEqualAndStatusOrderByTourDateAsc(tourId, startDate, endDate, Constant.STATUS_VERIFY);
+		List<VTicket> entities = this.ticketViewRepository.findByIdTourIdAndIdTourDateGreaterThanEqualAndIdTourDateLessThanEqualAndTicketStatusOrderByIdTourDateAsc(tourId, startDate, endDate, Constant.STATUS_ACTIVE);
 		
 		TourInventoryDto dto = null;
-		for(TourInventory entity : entities) {
+		for(VTicket entity : entities) {
 			dto = new TourInventoryDto();
-			dto.setId(entity.getId());
-			dto.setTourId(entity.getTourId());
-			dto.setTourDate(entity.getTourDate());
+			dto.setId(entity.getId().getInventoryId());
+			dto.setTourId(entity.getId().getTourId());
+			dto.setTourDate(entity.getId().getTourDate());
 			dto.setTotal(entity.getTotal());
 			dto.setAdultRate(entity.getAdultRate());
 			dto.setChildRate(entity.getChildRate());
 			dto.setCancelable(entity.getCancelable());
 			dto.setCancelBefore(entity.getCancelBefore());
-			dto.setStatus(entity.getStatus());
+			dto.setStatus(entity.getTicketStatus());
 		    
 			response.add(dto);
 		}
@@ -388,7 +393,7 @@ public class TourInfoService {
 			LocalDate endDate = req.getEndDate();
 			while(!endDate.isBefore(startDate)) {
 				
-				int cntDup = this.tourInventoryRepository.countByTourIdAndTourDate(tourId, startDate);
+				int cntDup = this.ticketViewRepository.countByIdTourIdAndIdTourDateAndTicketStatus(tourId, startDate, Constant.STATUS_TICKET_ACTIVE);
 				if(cntDup > 0) {
 					throw new ServiceException("Tour Date [" + startDate.format(DateTimeFormatter.ISO_DATE) + "] is duplicate.");	
 				}
@@ -416,7 +421,7 @@ public class TourInfoService {
 		entity.setChildRate(req.getChildRate());
 		entity.setCancelable(req.getCancelable());
 		entity.setCancelBefore(req.getCancelBefore());
-		entity.setStatus(Constant.STATUS_VERIFY);
+		entity.setStatus(Constant.STATUS_ACTIVE);
 		entity.setCreatedDate(currentTimestamp);
 		entity.setCreatedBy(userToken);
 		entity.setUpdatedDate(currentTimestamp);

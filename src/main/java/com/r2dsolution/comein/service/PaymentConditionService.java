@@ -55,7 +55,15 @@ public class PaymentConditionService {
 			response.setPayableDay(entity.getPayableDay());
 			response.setPayableTourDay(entity.getPayableTourDay());
 		} else {
-			throw new ServiceException("Data not found.");
+			List<PaymentConditionDefault> entitieDefaults = paymentConditionDefaultRepository.findAll();
+			
+			if(entitieDefaults != null && !entitieDefaults.isEmpty()) {
+				PaymentConditionDefault entity = entitieDefaults.get(0);
+				response.setCompanyId(companyId);
+				response.setUseDefault(true);
+				response.setPayableDay(entity.getPayableDay());
+				response.setPayableTourDay(entity.getPayableTourDay());
+			}
 		}
 		
 		return response;
@@ -110,13 +118,16 @@ public class PaymentConditionService {
 //		}
 		paymentConditionCompanyRepository.deleteByCompanyId(companyId);
 		
-		PaymentConditionCompany entity = new PaymentConditionCompany();
-		entity.setCompanyId(companyId);
-		entity.setUseDefault(req.isUseDefault());
-		entity.setPayableDay(req.getPayableDay());
-		entity.setPayableTourDay(req.getPayableTourDay());
-
-		paymentConditionCompanyRepository.save(entity);
+		boolean useDefault = req.isUseDefault();
+		if(!useDefault) {
+			PaymentConditionCompany entity = new PaymentConditionCompany();
+			entity.setCompanyId(companyId);
+			entity.setUseDefault(req.isUseDefault());
+			entity.setPayableDay(req.getPayableDay());
+			entity.setPayableTourDay(req.getPayableTourDay());
+	
+			paymentConditionCompanyRepository.save(entity);
+		}
 	}
 
 }

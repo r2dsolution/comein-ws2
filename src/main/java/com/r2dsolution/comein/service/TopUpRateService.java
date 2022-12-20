@@ -60,27 +60,43 @@ public class TopUpRateService {
 		List<TopupRateCompany> entities = topUpRateCompanyRepository.findByCompanyId(companyId);
 		
 		TopUpRateDto response = new TopUpRateDto();		
+		TopUpRateDetailDto dto = null;
 		List<TopUpRateDetailDto> details = new ArrayList<>();
 		if(entities != null && !entities.isEmpty()) {
-			TopupRateCompany entity = entities.get(0);
-			response.setCompanyId(entity.getCompanyId());
-			response.setUseDefault(entity.getUseDefault());
+			TopupRateCompany e = entities.get(0);
+			response.setCompanyId(e.getCompanyId());
+			response.setUseDefault(e.getUseDefault());
+			
+			for(TopupRateCompany entity : entities) {
+				dto = new TopUpRateDetailDto();
+				dto.setMinPeriod(entity.getMinPeriod());
+				dto.setMaxPeriod(entity.getMaxPeriod());
+				dto.setTopUpRate(entity.getTopupRate());
+				dto.setComeinRate(entity.getComeinRate());
+				dto.setHotelRate(entity.getHotelRate());
+				dto.setUpdatedDate(entity.getUpdatedDate());
+				
+				details.add(dto);
+			}		
 		} else {
-			throw new ServiceException("Data not found.");
+			response.setCompanyId(companyId);
+			response.setUseDefault(true);
+			
+			List<TopupRateDefault> entitieDefaults = topUpRateDefaultRepository.findAll();
+			for(TopupRateDefault entity : entitieDefaults) {
+				dto = new TopUpRateDetailDto();
+				dto.setMinPeriod(entity.getMinPeriod());
+				dto.setMaxPeriod(entity.getMaxPeriod());
+				dto.setTopUpRate(entity.getTopupRate());
+				dto.setComeinRate(entity.getComeinRate());
+				dto.setHotelRate(entity.getHotelRate());
+				dto.setUpdatedDate(entity.getUpdatedDate());
+				
+				details.add(dto);
+			}
 		}
 		
-		TopUpRateDetailDto dto = null;
-		for(TopupRateCompany entity : entities) {
-			dto = new TopUpRateDetailDto();
-			dto.setMinPeriod(entity.getMinPeriod());
-			dto.setMaxPeriod(entity.getMaxPeriod());
-			dto.setTopUpRate(entity.getTopupRate());
-			dto.setComeinRate(entity.getComeinRate());
-			dto.setHotelRate(entity.getHotelRate());
-			dto.setUpdatedDate(entity.getUpdatedDate());
-			
-			details.add(dto);
-		}
+
 		response.setDetail(details);
 		
 		return response;
@@ -148,21 +164,23 @@ public class TopUpRateService {
 
 		LocalDateTime currentTimestamp = LocalDateTime.now();
 		boolean useDefault = req.isUseDefault();
-		for(TopUpRateDetailDto detail : req.getDetail()) {
-			entity = new TopupRateCompany();
-			entity.setCompanyId(companyId);
-			entity.setUseDefault(useDefault);
-			entity.setMinPeriod(detail.getMinPeriod());
-			entity.setMaxPeriod(detail.getMaxPeriod());
-			entity.setTopupRate(detail.getTopUpRate());
-			entity.setComeinRate(detail.getComeinRate());
-			entity.setHotelRate(detail.getHotelRate());
-			entity.setUpdatedDate(currentTimestamp);
-			
-			entities.add(entity);
+		if(!useDefault) {
+			for(TopUpRateDetailDto detail : req.getDetail()) {
+				entity = new TopupRateCompany();
+				entity.setCompanyId(companyId);
+				entity.setUseDefault(useDefault);
+				entity.setMinPeriod(detail.getMinPeriod());
+				entity.setMaxPeriod(detail.getMaxPeriod());
+				entity.setTopupRate(detail.getTopUpRate());
+				entity.setComeinRate(detail.getComeinRate());
+				entity.setHotelRate(detail.getHotelRate());
+				entity.setUpdatedDate(currentTimestamp);
+				
+				entities.add(entity);
+			}
+			if(!entities.isEmpty())
+				topUpRateCompanyRepository.saveAll(entities);
 		}
-		if(!entities.isEmpty())
-			topUpRateCompanyRepository.saveAll(entities);
 	}
 
 }
