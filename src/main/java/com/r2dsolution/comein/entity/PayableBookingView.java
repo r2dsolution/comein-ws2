@@ -41,10 +41,17 @@ public class PayableBookingView implements Serializable {
     private String paymentMethod;
     @Column(name="total_sell_value")
     private BigDecimal totalSellValue;
+    @Column(name="comein_sell_value")
+    private BigDecimal comeinSellValue;
+    @Column(name="hotel_sell_value")
+    private BigDecimal hotelSellValue;
     @Column(name="tour_id", precision=19)
     private long tourId;
     @Column(name="reference_name")
     private String referenceName;
+    @Column(name="pay_status")
+    private String payStatus;
+    private String hotels;
     
     /** Default constructor. */
     public PayableBookingView() {
@@ -137,6 +144,38 @@ public class PayableBookingView implements Serializable {
 
 	public void setReferenceName(String referenceName) {
 		this.referenceName = referenceName;
+	}
+
+	public BigDecimal getComeinSellValue() {
+		return comeinSellValue;
+	}
+
+	public void setComeinSellValue(BigDecimal comeinSellValue) {
+		this.comeinSellValue = comeinSellValue;
+	}
+
+	public BigDecimal getHotelSellValue() {
+		return hotelSellValue;
+	}
+
+	public void setHotelSellValue(BigDecimal hotelSellValue) {
+		this.hotelSellValue = hotelSellValue;
+	}
+
+	public String getPayStatus() {
+		return payStatus;
+	}
+
+	public void setPayStatus(String payStatus) {
+		this.payStatus = payStatus;
+	}
+
+	public String getHotels() {
+		return hotels;
+	}
+
+	public void setHotels(String hotels) {
+		this.hotels = hotels;
 	}
 
 

@@ -18,6 +18,7 @@ import com.r2dsolution.comein.dao.PayablePeriodRepository;
 import com.r2dsolution.comein.dao.ReceiveTransactionRepository;
 import com.r2dsolution.comein.dao.TopUpRateCompanyRepository;
 import com.r2dsolution.comein.dao.TopUpRateDefaultRepository;
+import com.r2dsolution.comein.dao.TourBookingRepository;
 import com.r2dsolution.comein.dto.HotelPayableNoteDto;
 import com.r2dsolution.comein.dto.PayableBookingDetailDto;
 import com.r2dsolution.comein.dto.PayableBookingDto;
@@ -29,10 +30,12 @@ import com.r2dsolution.comein.entity.PayTransaction;
 import com.r2dsolution.comein.entity.PayableBookingView;
 import com.r2dsolution.comein.entity.PayablePeriod;
 import com.r2dsolution.comein.entity.ReceiveTransaction;
-import com.r2dsolution.comein.entity.TopupRateCompany;
-import com.r2dsolution.comein.entity.TopupRateDefault;
+import com.r2dsolution.comein.entity.TourBooking;
 import com.r2dsolution.comein.exception.ServiceException;
+import com.r2dsolution.comein.util.Constant;
 import com.r2dsolution.comein.util.DateUtils;
+import com.r2dsolution.comein.util.NumberUtils;
+import com.r2dsolution.comein.util.StringUtils;
 
 @Service
 public class PayableBookingService {
@@ -62,6 +65,9 @@ public class PayableBookingService {
 
 	@Autowired
 	private PayablePeriodRepository payablePeriodRepository;
+
+	@Autowired
+	private TourBookingRepository tourBookingRepository;
 
 	public List<PayableBookingDto> getPayableTourBooking(){
 		log.info("getPayableTourBooking ...");
@@ -97,7 +103,15 @@ public class PayableBookingService {
 		if(entity != null) {
 			
 			LocalDate currentDate = LocalDate.now();
-			BigDecimal receive = entity.getTotalSellValue();
+			String hotels = entity.getHotels();
+			BigDecimal receive = NumberUtils.toBigDecimal(entity.getTotalSellValue());
+			BigDecimal comeinRate = NumberUtils.toBigDecimal(entity.getComeinSellValue());
+			BigDecimal hotelRate = NumberUtils.toBigDecimal(entity.getHotelSellValue());
+			if(StringUtils.isEmpty(hotels)) {
+				comeinRate = comeinRate.add(hotelRate);
+				hotelRate = BigDecimal.ZERO;
+			}
+			BigDecimal totalRateTour = receive.subtract(comeinRate).subtract(hotelRate);
 			
 			ReceivableNoteDto recv = new ReceivableNoteDto();
 			recv.setTransactionDate(currentDate);
@@ -107,34 +121,31 @@ public class PayableBookingService {
 			response.setReceivableNote(recv);
 			
 			
-			Long companyId = entity.getCompanyId();
-			List<TopupRateCompany> compRates = topUpRateCompanyRepository.findByCompanyId(companyId);
-			if(compRates.isEmpty())
-				throw new ServiceException("Data not found.");
-			
-			BigDecimal comeinRate = BigDecimal.ZERO;
-			BigDecimal hotelRate = BigDecimal.ZERO;
-			BigDecimal totalRateTour = BigDecimal.ZERO;
-			TopupRateCompany firstCompRate = compRates.get(0);
-			boolean useDefault = firstCompRate.getUseDefault();
-			if(useDefault) {
-				List<TopupRateDefault> defaultRates = topUpRateDefaultRepository.findAll();
-				for(TopupRateDefault rate : defaultRates) {
-					if(receive.compareTo(rate.getMinPeriod()) < 0 && receive.compareTo(rate.getMaxPeriod()) > 0) {
-						comeinRate = rate.getComeinRate();
-						hotelRate = rate.getHotelRate();
-						totalRateTour = receive.subtract(comeinRate).subtract(hotelRate);
-					}
-				}
-			} else {
-				for(TopupRateCompany rate : compRates) {
-					if(receive.compareTo(rate.getMinPeriod()) < 0 && receive.compareTo(rate.getMaxPeriod()) > 0) {
-						comeinRate = rate.getComeinRate();
-						hotelRate = rate.getHotelRate();
-						totalRateTour = receive.subtract(comeinRate).subtract(hotelRate);
-					}					
-				}
-			}
+//			Long companyId = entity.getCompanyId();
+//			List<TopupRateCompany> compRates = topUpRateCompanyRepository.findByCompanyId(companyId);
+//			if(compRates.isEmpty())
+//				throw new ServiceException("Data not found.");
+//			
+//			TopupRateCompany firstCompRate = compRates.get(0);
+//			boolean useDefault = firstCompRate.getUseDefault();
+//			if(useDefault) {
+//				List<TopupRateDefault> defaultRates = topUpRateDefaultRepository.findAll();
+//				for(TopupRateDefault rate : defaultRates) {
+//					if(receive.compareTo(rate.getMinPeriod()) < 0 && receive.compareTo(rate.getMaxPeriod()) > 0) {
+//						comeinRate = rate.getComeinRate();
+//						hotelRate = rate.getHotelRate();
+//						totalRateTour = receive.subtract(comeinRate).subtract(hotelRate);
+//					}
+//				}
+//			} else {
+//				for(TopupRateCompany rate : compRates) {
+//					if(receive.compareTo(rate.getMinPeriod()) < 0 && receive.compareTo(rate.getMaxPeriod()) > 0) {
+//						comeinRate = rate.getComeinRate();
+//						hotelRate = rate.getHotelRate();
+//						totalRateTour = receive.subtract(comeinRate).subtract(hotelRate);
+//					}					
+//				}
+//			}
 
 			TourPayableNoteDto tour = new TourPayableNoteDto();
 			tour.setTransactionDate(currentDate);
@@ -144,11 +155,13 @@ public class PayableBookingService {
 			tour.setTotal(totalRateTour);
 			response.setTourPayableNote(tour);
 			
-			HotelPayableNoteDto hotel = new HotelPayableNoteDto();
-			hotel.setTransactionDate(currentDate);
-			hotel.setHotelRate(hotelRate);
-			hotel.setTotal(hotelRate);
-			response.setHotelPayableNote(hotel);
+			if(entity.getHotels() != null) {
+				HotelPayableNoteDto hotel = new HotelPayableNoteDto();
+				hotel.setTransactionDate(currentDate);
+				hotel.setHotelRate(hotelRate);
+				hotel.setTotal(hotelRate);
+				response.setHotelPayableNote(hotel);
+			}
 			
 		} else {
 			throw new ServiceException("Data not found.");
@@ -250,6 +263,13 @@ public class PayableBookingService {
 
 					this.payablePeriodRepository.save(payablePeriodHotel);
 				}
+			}
+			
+			TourBooking tourBooking = this.tourBookingRepository.findFirstByBookingCodeAndStatus(bookingCode, Constant.STATUS_BOOKING_BOOKED);
+			if(tourBooking != null) {
+				tourBooking.setPayStatus(Constant.STATUS_PAY_PREPARE);
+				
+				this.tourBookingRepository.save(tourBooking);
 			}
 			
 		} else {

@@ -12,13 +12,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.r2dsolution.comein.dao.AccountingTransactionRepository;
+import com.r2dsolution.comein.dao.PayTransactionRepository;
 import com.r2dsolution.comein.dao.PayablePeriodRepository;
 import com.r2dsolution.comein.dao.PayableTourViewRepository;
+import com.r2dsolution.comein.dao.TourBookingRepository;
 import com.r2dsolution.comein.dto.PayableCompanyDto;
 import com.r2dsolution.comein.dto.PayableCompanySummaryDto;
+import com.r2dsolution.comein.entity.AccountingTransaction;
+import com.r2dsolution.comein.entity.PayTransaction;
 import com.r2dsolution.comein.entity.PayablePeriod;
 import com.r2dsolution.comein.entity.PayableTourView;
+import com.r2dsolution.comein.entity.TourBooking;
 import com.r2dsolution.comein.exception.ServiceException;
+import com.r2dsolution.comein.util.Constant;
 
 @Service
 public class PayableCompanyService {
@@ -30,6 +37,15 @@ public class PayableCompanyService {
 
 	@Autowired
 	private PayablePeriodRepository payablePeriodRepository;
+
+	@Autowired
+	private TourBookingRepository tourBookingRepository;
+	
+	@Autowired
+	private PayTransactionRepository payTransactionRepository;
+	
+	@Autowired
+	private AccountingTransactionRepository accountingTransactionRepository;
 
 	public List<PayableCompanySummaryDto> getPayableTourByCompanyId(Long companyId){
 		log.info("getPayableTourByCompanyId companyId : {}", companyId);
@@ -98,6 +114,21 @@ public class PayableCompanyService {
 			entity.setStatus("Close");
 			
 			payablePeriodRepository.save(entity);
+			
+			Optional<PayTransaction> payTrxOpt = this.payTransactionRepository.findById(entity.getPayId());
+			if(payTrxOpt.isPresent()) {
+				
+				Optional<AccountingTransaction> acctTrxOpt = this.accountingTransactionRepository.findById(payTrxOpt.get().getAccountingId());
+				if(acctTrxOpt.isPresent()) {
+					TourBooking tourBooking = this.tourBookingRepository.findFirstByBookingCodeAndStatus(acctTrxOpt.get().getBookingCode(), Constant.STATUS_BOOKING_BOOKED);
+					if(tourBooking != null) {
+						tourBooking.setPayStatus(Constant.STATUS_PAY_PAID);
+						
+						this.tourBookingRepository.save(tourBooking);
+					}
+				}
+			}
+
 		} else {
 			throw new ServiceException("Data not found.");
 		}

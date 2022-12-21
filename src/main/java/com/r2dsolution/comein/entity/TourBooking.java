@@ -68,6 +68,8 @@ public class TourBooking implements Serializable {
     private long companyId;
     @Column(name="tour_id")
     private long tourId;
+    @Column(name="pay_status")
+    private String payStatus;
     
     /** Default constructor. */
     public TourBooking() {
@@ -432,6 +434,14 @@ public class TourBooking implements Serializable {
 
 	public void setNetValue(BigDecimal netValue) {
 		this.netValue = netValue;
+	}
+
+	public String getPayStatus() {
+		return payStatus;
+	}
+
+	public void setPayStatus(String payStatus) {
+		this.payStatus = payStatus;
 	}
 
 }

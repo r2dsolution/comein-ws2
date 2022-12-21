@@ -29,6 +29,9 @@ public class Constant {
 	
 	public static final String STATUS_BOOKING_BOOKED = "Booked";
 	public static final String STATUS_BOOKING_CANCEL = "Cancel";
+	
+	public static final String STATUS_PAY_PREPARE = "Prepare";
+	public static final String STATUS_PAY_PAID = "Paid";
 
 	public static final String STATUS_TICKET_ACTIVE = "Active";
 	public static final String STATUS_TICKET_INACTIVE = "InActive";

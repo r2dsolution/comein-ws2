@@ -1,7 +1,5 @@
 package com.r2dsolution.comein.util;
 
-import com.r2dsolution.comein.util.ObjectUtils;
-
 public class StringUtils {
 
 	public static boolean isEmpty(Object data) {
