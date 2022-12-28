@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.r2dsolution.comein.dto.OtaBookingDto;
 import com.r2dsolution.comein.dto.PayableBookingDetailDto;
@@ -30,10 +31,10 @@ public class PayableBookingController {
 	
 	
 	@GetMapping("/payable-bookings")
-	public ResponseEntity<List<PayableBookingDto>> listPayableBookings() {
+	public ResponseEntity<List<PayableBookingDto>> listPayableBookings(@RequestParam(required = false) Long companyId) {
 		log.info("Start.....listPayableBookings");
 		
-		List<PayableBookingDto> res = this.payableBookingService.getPayableTourBooking();
+		List<PayableBookingDto> res = this.payableBookingService.getPayableTourBooking(companyId);
 		
         return ResponseEntity.ok(res);
 	}

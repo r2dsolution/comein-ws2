@@ -69,12 +69,19 @@ public class PayableBookingService {
 	@Autowired
 	private TourBookingRepository tourBookingRepository;
 
-	public List<PayableBookingDto> getPayableTourBooking(){
-		log.info("getPayableTourBooking ...");
+	public List<PayableBookingDto> getPayableTourBooking(Long companyId){
+		log.info("getPayableTourBooking ...companyId : {}", companyId);
 		List<PayableBookingDto> response = new ArrayList<>();;
 		
-		List<PayableBookingView> entities = payableBookingViewRepository.findAll();
-		if(!entities.isEmpty()) {
+		List<PayableBookingView> entities = null;
+		
+		if(companyId != null) {
+			entities = payableBookingViewRepository.findByCompanyId(companyId);
+		} else {
+			entities = payableBookingViewRepository.findAll();
+		}
+		
+		if(entities != null && !entities.isEmpty()) {
 			PayableBookingDto dto = null;
 			for(PayableBookingView entity : entities) {
 				dto = new PayableBookingDto();

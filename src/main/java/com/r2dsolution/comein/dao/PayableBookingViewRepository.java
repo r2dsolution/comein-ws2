@@ -10,7 +10,9 @@ import com.r2dsolution.comein.entity.PayableBookingView;
 public interface PayableBookingViewRepository extends JpaSpecificationExecutor<PayableBookingView>, PagingAndSortingRepository<PayableBookingView, Long> {
 
 	List<PayableBookingView> findAll();
-	
+
+	List<PayableBookingView> findByCompanyId(Long companyId);
+
 	PayableBookingView findFirstByBookingCode(String bookingCode);
 }
 
