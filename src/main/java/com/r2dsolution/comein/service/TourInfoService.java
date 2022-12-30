@@ -43,6 +43,7 @@ import com.r2dsolution.comein.exception.ServiceException;
 import com.r2dsolution.comein.spec.TourInfoSpecification;
 import com.r2dsolution.comein.util.Constant;
 import com.r2dsolution.comein.util.ObjectUtils;
+import com.r2dsolution.comein.util.StringUtils;
 
 @Service
 public class TourInfoService {
@@ -141,6 +142,27 @@ public class TourInfoService {
 			response.setDetail(entity.getDetail());
 			response.setStatus(entity.getStatus());
 			
+			String startHour = null;
+			String startMinute = null;
+			String endHour = null;
+			String endMinute = null;
+			String startTime = entity.getStartTime();
+			String endTime = entity.getEndTime();
+			if(!StringUtils.isEmpty(startTime)) {
+				String[] times = startTime.split(":");
+				startHour = times[0];
+				startMinute = times[1];
+			}
+			if(!StringUtils.isEmpty(endTime)) {
+				String[] times = endTime.split(":");
+				endHour = times[0];
+				endMinute = times[1];
+			}
+			response.setStartHour(startHour);
+			response.setStartMinute(startMinute);
+			response.setEndHour(endHour);
+			response.setEndMinute(endMinute);
+			
 			Optional<TourCompany> company = tourCompanyRepository.findById(entity.getCompanyId());
 			if(company.isPresent()) {
 				response.setCompanyName(company.get().getCompanyName());
@@ -220,6 +242,13 @@ public class TourInfoService {
 		entity.setUpdatedDate(currentTimestamp);
 		entity.setUpdatedBy(userToken);
 		
+		if(!StringUtils.isEmpty(req.getStartHour()) && !StringUtils.isEmpty(req.getStartMinute())) {
+			entity.setStartTime(req.getStartHour()+":"+req.getStartMinute());
+		}
+		if(!StringUtils.isEmpty(req.getEndHour()) && !StringUtils.isEmpty(req.getEndMinute())) {
+			entity.setEndTime(req.getEndHour()+":"+req.getEndMinute());
+		}
+		
 		tourInfoRepository.save(entity);
 		
 		if(req.getImages() != null && !req.getImages().isEmpty()) {
@@ -293,6 +322,13 @@ public class TourInfoService {
 			entity.setDetail(req.getDetail());
 			entity.setUpdatedDate(currentTimestamp);
 			entity.setUpdatedBy(userToken);
+			
+			if(!StringUtils.isEmpty(req.getStartHour()) && !StringUtils.isEmpty(req.getStartMinute())) {
+				entity.setStartTime(req.getStartHour()+":"+req.getStartMinute());
+			}
+			if(!StringUtils.isEmpty(req.getEndHour()) && !StringUtils.isEmpty(req.getEndMinute())) {
+				entity.setEndTime(req.getEndHour()+":"+req.getEndMinute());
+			}
 			
 			tourInfoRepository.save(entity);
 			

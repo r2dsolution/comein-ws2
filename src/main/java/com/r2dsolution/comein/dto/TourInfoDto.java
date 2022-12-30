@@ -16,6 +16,10 @@ public class TourInfoDto {
 	private String country;
 	private List<String> provinces;
     private String detail;
+    private String startHour;
+    private String startMinute;
+    private String endHour;
+    private String endMinute;
     
     private List<TourImageDto> images;
     
@@ -90,6 +94,30 @@ public class TourInfoDto {
 	}
 	public void setProvinces(List<String> provinces) {
 		this.provinces = provinces;
+	}
+	public String getStartHour() {
+		return startHour;
+	}
+	public void setStartHour(String startHour) {
+		this.startHour = startHour;
+	}
+	public String getStartMinute() {
+		return startMinute;
+	}
+	public void setStartMinute(String startMinute) {
+		this.startMinute = startMinute;
+	}
+	public String getEndHour() {
+		return endHour;
+	}
+	public void setEndHour(String endHour) {
+		this.endHour = endHour;
+	}
+	public String getEndMinute() {
+		return endMinute;
+	}
+	public void setEndMinute(String endMinute) {
+		this.endMinute = endMinute;
 	}
 	
 }

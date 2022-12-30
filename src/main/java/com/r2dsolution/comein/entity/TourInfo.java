@@ -53,6 +53,10 @@ public class TourInfo implements Serializable {
 	private String country;
 	private String province;
 	private String detail;
+    @Column(name="start_time")
+    private String startTime;
+    @Column(name="end_time")
+    private String endTime;
 
     /** Default constructor. */
     public TourInfo() {
@@ -349,6 +353,22 @@ public class TourInfo implements Serializable {
 
 	public void setDetail(String detail) {
 		this.detail = detail;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
 	}
 
 }
