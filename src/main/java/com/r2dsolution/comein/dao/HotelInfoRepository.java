@@ -20,6 +20,8 @@ public interface HotelInfoRepository extends JpaSpecificationExecutor<HotelInfo>
 	
 	List<HotelInfo> findByStatus(String status);
 	
+	List<HotelInfo> findByIdIn(List<Long> ids);
+	
 	@Transactional
 	@Modifying
 	@Query("update HotelInfo x set x.ownerId = ?1 where x.ownerId = ?2 ")

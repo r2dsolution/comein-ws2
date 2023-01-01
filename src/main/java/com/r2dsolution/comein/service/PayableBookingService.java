@@ -4,14 +4,19 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.r2dsolution.comein.dao.AccountInfoRepository;
 import com.r2dsolution.comein.dao.AccountingTransactionRepository;
+import com.r2dsolution.comein.dao.HotelInfoRepository;
 import com.r2dsolution.comein.dao.PayTransactionRepository;
 import com.r2dsolution.comein.dao.PayableBookingViewRepository;
 import com.r2dsolution.comein.dao.PayablePeriodRepository;
@@ -26,6 +31,7 @@ import com.r2dsolution.comein.dto.PayablePeriodDto;
 import com.r2dsolution.comein.dto.ReceivableNoteDto;
 import com.r2dsolution.comein.dto.TourPayableNoteDto;
 import com.r2dsolution.comein.entity.AccountingTransaction;
+import com.r2dsolution.comein.entity.HotelInfo;
 import com.r2dsolution.comein.entity.PayTransaction;
 import com.r2dsolution.comein.entity.PayableBookingView;
 import com.r2dsolution.comein.entity.PayablePeriod;
@@ -69,6 +75,9 @@ public class PayableBookingService {
 	@Autowired
 	private TourBookingRepository tourBookingRepository;
 
+	@Autowired
+	private HotelInfoRepository hotelInfoRepository;
+	
 	public List<PayableBookingDto> getPayableTourBooking(Long companyId){
 		log.info("getPayableTourBooking ...companyId : {}", companyId);
 		List<PayableBookingDto> response = new ArrayList<>();;
@@ -167,6 +176,18 @@ public class PayableBookingService {
 				hotel.setTransactionDate(currentDate);
 				hotel.setHotelRate(hotelRate);
 				hotel.setTotal(hotelRate);
+				
+				ObjectMapper mapper = new ObjectMapper();
+				try {
+					List<Long> strings = mapper.readValue(entity.getHotels(), List.class);
+					List<Long> hotelIds = strings.stream().distinct().collect(Collectors.toList());
+					System.out.println(hotelIds);
+					
+					List<HotelInfo> resHotels = this.hotelInfoRepository.findByIdIn(hotelIds);
+					
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				response.setHotelPayableNote(hotel);
 			}
 			
@@ -284,6 +305,27 @@ public class PayableBookingService {
 		}
 
 		
+	}
+	
+	public static void main(String[] args) {
+		String json = "[13,13]";
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			List<Long> strings = mapper.readValue(json, List.class);
+			List res = strings.stream().distinct().collect(Collectors.toList());
+			System.out.println(res);
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		
+//		JSONArray arr = new JSONArray(json);
+//		List<String> list = new ArrayList<String>();
+//		for(int i = 0; i < arr.length(); i++){
+//		    list.add(arr.getJSONObject(i).toString());
+//		}
+//		System.out.println(list);
 	}
 	
 }
